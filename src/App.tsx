@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { ShoppingBag, Settings, Search, MessageCircle, ArrowUp, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, Settings, Search, MessageCircle, ArrowUp, CheckCircle2, Instagram, Facebook, Music2 } from 'lucide-react';
 import { ProductCard } from './components/ProductCard';
 import { CartDrawer } from './components/CartDrawer';
 import { AdminPanel } from './components/AdminPanel';
-import { CartItem } from './types';
+import { ProductModal } from './components/ProductModal';
+import { CartItem, Product } from './types';
 import { STORE_CONFIG } from './config';
 import { useProducts } from './hooks/useProducts';
 import { useSettings } from './hooks/useSettings';
@@ -15,9 +16,11 @@ export default function App() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState('newest');
   const [isScrolled, setIsScrolled] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
   const { products, isLoaded, addProduct, updateProduct, removeProduct } = useProducts();
   const { settings, saveSettings } = useSettings();
 
@@ -41,6 +44,7 @@ export default function App() {
     });
     setToastMessage(`Adicionado: ${newItem.product.name}`);
     setTimeout(() => setToastMessage(null), 3000);
+    setSelectedProduct(null); // close modal if open
   };
 
   const updateQuantity = (id: string, delta: number) => {
@@ -66,12 +70,18 @@ export default function App() {
                           product.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory ? product.category === selectedCategory : true;
     return matchesSearch && matchesCategory;
+  }).sort((a, b) => {
+    if (sortBy === 'price-asc') return a.price - b.price;
+    if (sortBy === 'price-desc') return b.price - a.price;
+    if (sortBy === 'a-z') return a.name.localeCompare(b.name);
+    // newest (fallback)
+    return b.id.localeCompare(a.id);
   });
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] font-sans">
       {/* Header */}
-      <header className="bg-black border-b border-gray-800 sticky top-0 z-30">
+      <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-0 sm:h-24 flex flex-col sm:flex-row items-center justify-between relative overflow-hidden">
           
           <div className="w-full sm:w-auto flex items-center justify-between sm:justify-start z-20">
@@ -98,7 +108,7 @@ export default function App() {
               >
                 <ShoppingBag className="w-6 h-6" />
                 {cartItemsCount > 0 && (
-                  <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center translate-x-0 -translate-y-0 shadow-sm border-2 border-black">
+                  <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center translate-x-0 -translate-y-0 shadow-sm border-2 border-gray-900">
                     {cartItemsCount}
                   </span>
                 )}
@@ -132,7 +142,7 @@ export default function App() {
             >
               <ShoppingBag className="w-6 h-6" />
               {cartItemsCount > 0 && (
-                <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center translate-x-0 -translate-y-0 shadow-sm border-2 border-black">
+                <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center translate-x-0 -translate-y-0 shadow-sm border-2 border-gray-900">
                   {cartItemsCount}
                 </span>
               )}
@@ -141,6 +151,25 @@ export default function App() {
 
         </div>
       </header>
+
+      {/* Promotional Banner */}
+      {settings.bannerActive && (
+        <div className="bg-[#F8F9FA]">
+          {settings.bannerImageUrl ? (
+            <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+              <img 
+                src={settings.bannerImageUrl} 
+                alt={settings.bannerText || "Banner Promocional"} 
+                className="w-full h-auto max-h-[300px] sm:max-h-[400px] object-cover rounded-2xl shadow-sm"
+              />
+            </div>
+          ) : settings.bannerText ? (
+            <div className="bg-orange-600 text-white px-4 py-2 text-center text-sm font-medium shadow-sm">
+              {settings.bannerText}
+            </div>
+          ) : null}
+        </div>
+      )}
 
       {/* Product Grid */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -158,6 +187,17 @@ export default function App() {
                 className="w-full sm:w-64 pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
               />
             </div>
+            
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value)}
+              className="w-full sm:w-auto px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-gray-700 font-medium"
+            >
+              <option value="newest">Lançamentos</option>
+              <option value="price-asc">Menor Preço</option>
+              <option value="price-desc">Maior Preço</option>
+              <option value="a-z">A - Z</option>
+            </select>
           </div>
         </div>
 
@@ -214,6 +254,7 @@ export default function App() {
                 key={product.id} 
                 product={product} 
                 onAddToCart={handleAddToCart} 
+                onView={() => setSelectedProduct(product)}
               />
             ))}
           </div>
@@ -221,10 +262,10 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-12 mt-12 border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
-          <div className="flex flex-col items-center md:items-start">
-            <div className="flex items-center gap-2 mb-4">
+      <footer className="bg-gray-900 text-gray-400 py-6 mt-12 border-t border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-8 text-center md:text-left">
+          <div className="flex flex-col items-center md:items-start md:max-w-sm">
+            <div className="flex items-center gap-2 mb-2">
               {settings.logo && (
                 <img src={settings.logo} alt="Logo" className="h-16 sm:h-20 w-auto object-contain" />
               )}
@@ -234,14 +275,36 @@ export default function App() {
             </div>
             <p className="text-sm">{settings.footerDescription}</p>
           </div>
-          <div>
-            <h4 className="text-white font-bold text-lg mb-4">Contato</h4>
-            <p className="text-sm">WhatsApp: {settings.whatsapp.replace(/(\d{2})(\d{2})(\d{4,5})(\d{4})/, '+$1 ($2) $3-$4')}</p>
-          </div>
-          <div>
-            <h4 className="text-white font-bold text-lg mb-4">Informações</h4>
-            {settings.footerInfo1 && <p className="text-sm">{settings.footerInfo1}</p>}
-            {settings.footerInfo2 && <p className="text-sm">{settings.footerInfo2}</p>}
+          
+          <div className="flex flex-col sm:flex-row gap-8 sm:gap-16 md:mt-4">
+            <div>
+              <h4 className="text-white font-bold text-lg mb-2">Contato</h4>
+              <p className="text-sm mb-3">WhatsApp: {settings.whatsapp.replace(/(\d{2})(\d{2})(\d{4,5})(\d{4})/, '+$1 ($2) $3-$4')}</p>
+              {(settings.instagramUrl || settings.facebookUrl || settings.tiktokUrl) && (
+                <div className="flex gap-4 items-center justify-center sm:justify-start">
+                  {settings.instagramUrl && (
+                    <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title="Instagram">
+                      <Instagram className="w-5 h-5" />
+                    </a>
+                  )}
+                  {settings.facebookUrl && (
+                    <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title="Facebook">
+                      <Facebook className="w-5 h-5" />
+                    </a>
+                  )}
+                  {settings.tiktokUrl && (
+                    <a href={settings.tiktokUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title="TikTok">
+                      <Music2 className="w-5 h-5" />
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+            <div>
+              <h4 className="text-white font-bold text-lg mb-2">Informações</h4>
+              {settings.footerInfo1 && <p className="text-sm mb-1">{settings.footerInfo1}</p>}
+              {settings.footerInfo2 && <p className="text-sm">{settings.footerInfo2}</p>}
+            </div>
           </div>
         </div>
       </footer>
@@ -292,6 +355,12 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <ProductModal
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+        onAddToCart={handleAddToCart}
+      />
 
       <CartDrawer 
         isOpen={isCartOpen}

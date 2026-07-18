@@ -25,6 +25,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
     name: '',
     description: '',
     price: '',
+    oldPrice: '',
     image: '',
     sizes: '',
     colors: '',
@@ -34,6 +35,46 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
   const [settingsFormData, setSettingsFormData] = useState({ ...settings });
   
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const bannerInputRef = useRef<HTMLInputElement>(null);
+
+  const handleBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 1600; // Wider for banners
+        const MAX_HEIGHT = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        setSettingsFormData(prev => ({ ...prev, bannerImageUrl: dataUrl }));
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -89,6 +130,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
         name: product.name,
         description: product.description,
         price: product.price.toString(),
+        oldPrice: product.oldPrice?.toString() || '',
         image: product.image,
         sizes: product.sizes.join(', '),
         colors: product.colors.join(', '),
@@ -97,7 +139,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
     } else {
       setEditingId(null);
       setFormData({
-        name: '', description: '', price: '', image: '', sizes: '', colors: '', category: ''
+        name: '', description: '', price: '', oldPrice: '', image: '', sizes: '', colors: '', category: ''
       });
     }
     setIsFormOpen(true);
@@ -144,11 +186,15 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const parsedOldPrice = parseFloat(formData.oldPrice.replace(',', '.'));
+    
     const newProduct: Product = {
       id: editingId || Date.now().toString(),
       name: formData.name,
       description: formData.description,
       price: parseFloat(formData.price.replace(',', '.')) || 0,
+      oldPrice: isNaN(parsedOldPrice) || parsedOldPrice <= 0 ? undefined : parsedOldPrice,
       image: formData.image || 'https://images.unsplash.com/photo-1582966772680-860e372bb558?w=800&q=80', // Fallback
       sizes: formData.sizes.split(',').map(s => s.trim()).filter(Boolean),
       colors: formData.colors.split(',').map(c => c.trim()).filter(Boolean),
@@ -278,6 +324,86 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                   </div>
                 </div>
               </div>
+
+              <div className="pt-4 border-t border-gray-200 mt-2">
+                <h4 className="text-sm font-bold text-gray-900 mb-4">Redes Sociais (Opcional)</h4>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Instagram (URL)</label>
+                    <input type="url" value={settingsFormData.instagramUrl || ''} onChange={e => setSettingsFormData({...settingsFormData, instagramUrl: e.target.value})} className="w-full p-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" placeholder="https://instagram.com/..." />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Facebook (URL)</label>
+                    <input type="url" value={settingsFormData.facebookUrl || ''} onChange={e => setSettingsFormData({...settingsFormData, facebookUrl: e.target.value})} className="w-full p-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" placeholder="https://facebook.com/..." />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">TikTok (URL)</label>
+                    <input type="url" value={settingsFormData.tiktokUrl || ''} onChange={e => setSettingsFormData({...settingsFormData, tiktokUrl: e.target.value})} className="w-full p-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" placeholder="https://tiktok.com/..." />
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-gray-200 mt-2">
+                <h4 className="text-sm font-bold text-gray-900 mb-4">Banner Promocional</h4>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="checkbox" 
+                      id="bannerActive" 
+                      checked={settingsFormData.bannerActive || false} 
+                      onChange={e => setSettingsFormData({...settingsFormData, bannerActive: e.target.checked})}
+                      className="w-4 h-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="bannerActive" className="text-sm font-medium text-gray-700">
+                      Exibir banner promocional no topo
+                    </label>
+                  </div>
+                  {settingsFormData.bannerActive && (
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1">Texto do Banner (Opcional se usar imagem)</label>
+                        <input type="text" value={settingsFormData.bannerText || ''} onChange={e => setSettingsFormData({...settingsFormData, bannerText: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Frete Grátis acima de R$100" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1">Imagem do Banner (Opcional)</label>
+                        <div className="flex flex-col gap-3">
+                          {settingsFormData.bannerImageUrl && (
+                            <div className="w-full h-32 rounded-lg overflow-hidden border border-gray-200 shrink-0 bg-white relative group flex items-center justify-center p-2">
+                              <img src={settingsFormData.bannerImageUrl} className="w-full h-full object-cover" alt="Banner Preview" />
+                              <button 
+                                type="button"
+                                onClick={() => setSettingsFormData({...settingsFormData, bannerImageUrl: ''})}
+                                className="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <Trash2 className="w-6 h-6" />
+                              </button>
+                            </div>
+                          )}
+                          <div className="flex flex-col gap-2">
+                            <input 
+                              type="file" 
+                              accept="image/*"
+                              ref={bannerInputRef}
+                              onChange={handleBannerUpload}
+                              className="hidden"
+                            />
+                            <button 
+                              type="button"
+                              onClick={() => bannerInputRef.current?.click()}
+                              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors w-full sm:w-auto"
+                            >
+                              <Upload className="w-4 h-4" />
+                              Fazer Upload da Imagem do Banner
+                            </button>
+                            <p className="text-xs text-gray-500">Tamanho ideal: 1200x400 pixels para visualização perfeita no catálogo. Ou cole a URL abaixo:</p>
+                            <input type="url" value={settingsFormData.bannerImageUrl || ''} onChange={e => setSettingsFormData({...settingsFormData, bannerImageUrl: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Ex: https://..." />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="mt-8 flex flex-col-reverse sm:flex-row justify-end gap-3 pt-6 border-t border-gray-200">
@@ -304,6 +430,11 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Preço (R$) *</label>
                 <input required type="number" step="0.01" min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="99.90" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Preço Antigo (R$) (De / Por)</label>
+                <input type="number" step="0.01" min="0" value={formData.oldPrice} onChange={e => setFormData({...formData, oldPrice: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="129.90 (Opcional)" />
               </div>
 
               <div>

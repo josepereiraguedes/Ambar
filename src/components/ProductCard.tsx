@@ -5,9 +5,10 @@ import { Product, CartItem } from '../types';
 interface ProductCardProps {
   product: Product;
   onAddToCart: (item: CartItem) => void;
+  onView?: () => void;
 }
 
-export function ProductCard({ product, onAddToCart }: ProductCardProps) {
+export function ProductCard({ product, onAddToCart, onView }: ProductCardProps) {
   const [size, setSize] = useState(product.sizes[0]);
   const [color, setColor] = useState(product.colors[0]);
 
@@ -23,10 +24,15 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
 
   return (
     <div className="flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group">
-      <div className="aspect-square overflow-hidden bg-gray-50 relative">
+      <div className="aspect-square overflow-hidden bg-gray-50 relative cursor-pointer" onClick={onView}>
         {product.category && (
           <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-gray-800 text-xs font-bold px-2.5 py-1 rounded-full shadow-sm z-10">
             {product.category}
+          </span>
+        )}
+        {product.oldPrice && product.oldPrice > product.price && (
+          <span className="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm z-10">
+            Oferta
           </span>
         )}
         <img 
@@ -35,6 +41,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500 ease-out" 
           loading="lazy"
         />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
       </div>
       <div className="p-5 flex flex-col flex-1">
         <h3 className="font-semibold text-gray-900 text-lg mb-1">{product.name}</h3>
@@ -73,9 +80,16 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
         </div>
 
         <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-50">
-          <span className="text-xl font-bold text-gray-900">
-            R$ {product.price.toFixed(2).replace('.', ',')}
-          </span>
+          <div className="flex flex-col">
+            {product.oldPrice && product.oldPrice > product.price && (
+              <span className="text-sm text-gray-400 line-through">
+                R$ {product.oldPrice.toFixed(2).replace('.', ',')}
+              </span>
+            )}
+            <span className="text-xl font-bold text-gray-900">
+              R$ {product.price.toFixed(2).replace('.', ',')}
+            </span>
+          </div>
           <button
             onClick={handleAdd}
             className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"

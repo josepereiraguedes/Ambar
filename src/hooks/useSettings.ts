@@ -9,6 +9,12 @@ export interface StoreSettings {
   footerDescription?: string;
   footerInfo1?: string;
   footerInfo2?: string;
+  bannerActive?: boolean;
+  bannerText?: string;
+  bannerImageUrl?: string;
+  instagramUrl?: string;
+  facebookUrl?: string;
+  tiktokUrl?: string;
 }
 
 export function useSettings() {
@@ -20,6 +26,12 @@ export function useSettings() {
     footerDescription: 'Especialistas em meias. Qualidade e conforto direto da fábrica para você.',
     footerInfo1: 'Enviamos para todo o Brasil.',
     footerInfo2: 'Atendimento de Seg a Sex.',
+    bannerActive: false,
+    bannerText: 'Frete Grátis acima de R$100 para todo o Brasil!',
+    bannerImageUrl: '',
+    instagramUrl: '',
+    facebookUrl: '',
+    tiktokUrl: '',
   });
 
   useEffect(() => {
@@ -31,7 +43,13 @@ export function useSettings() {
         showName: parsed.showName ?? true,
         footerDescription: parsed.footerDescription ?? 'Especialistas em meias. Qualidade e conforto direto da fábrica para você.',
         footerInfo1: parsed.footerInfo1 ?? 'Enviamos para todo o Brasil.',
-        footerInfo2: parsed.footerInfo2 ?? 'Atendimento de Seg a Sex.'
+        footerInfo2: parsed.footerInfo2 ?? 'Atendimento de Seg a Sex.',
+        bannerActive: parsed.bannerActive ?? false,
+        bannerText: parsed.bannerText ?? 'Frete Grátis acima de R$100 para todo o Brasil!',
+        bannerImageUrl: parsed.bannerImageUrl ?? '',
+        instagramUrl: parsed.instagramUrl ?? '',
+        facebookUrl: parsed.facebookUrl ?? '',
+        tiktokUrl: parsed.tiktokUrl ?? '',
       });
     } else {
       localStorage.setItem('@ambar:settings', JSON.stringify(settings));
