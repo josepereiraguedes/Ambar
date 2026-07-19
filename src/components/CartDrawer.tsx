@@ -2,7 +2,6 @@ import { X, Trash2, Plus, Minus, MessageCircle, ShoppingBag } from 'lucide-react
 import { motion, AnimatePresence } from 'motion/react';
 import { CartItem } from '../types';
 import { useState } from 'react';
-import { STORE_CONFIG } from '../config';
 
 import { StoreSettings } from '../hooks/useSettings';
 

@@ -4,7 +4,6 @@ import { ProductCard } from '../components/ProductCard';
 import { CartDrawer } from '../components/CartDrawer';
 import { ProductModal } from '../components/ProductModal';
 import { CartItem, Product } from '../types';
-import { STORE_CONFIG } from '../config';
 import { useProducts } from '../hooks/useProducts';
 import { useSettings } from '../hooks/useSettings';
 import { motion, AnimatePresence } from 'motion/react';
@@ -95,10 +94,7 @@ export default function App() {
   });
 
   return (
-    <div
-      style={{ opacity: allLoaded ? 1 : 0.6, transition: 'opacity 0.25s ease-in-out' }}
-      className="min-h-screen bg-[#F8F9FA] font-sans"
-    >
+    <div className="min-h-screen bg-[#F8F9FA] font-sans">
       {/* Header */}
       <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-0 sm:h-24 flex flex-col sm:flex-row items-center justify-between relative overflow-hidden">

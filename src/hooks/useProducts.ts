@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Product } from '../types';
 import { supabase } from '../lib/supabase';
-import { products as defaultProducts } from '../data';
 
 // Mapeia linha do banco (snake_case) para tipo Product (camelCase)
 const mapFromDB = (row: Record<string, unknown>): Product => ({
@@ -44,33 +43,14 @@ export function useProducts() {
 
     if (error) {
       console.error('Erro ao buscar produtos:', error.message);
-      setProducts(defaultProducts);
       setIsLoaded(true);
       return;
     }
 
-    if (!data || data.length === 0) {
-      // Banco vazio: inserir produtos padrão
-      await seedDefaultProducts();
-    } else {
+    if (data) {
       setProducts(data.map(mapFromDB));
     }
     setIsLoaded(true);
-  };
-
-  const seedDefaultProducts = async () => {
-    const toInsert = defaultProducts.map(mapToDB);
-    const { data, error } = await supabase
-      .from('products')
-      .insert(toInsert)
-      .select();
-
-    if (error) {
-      console.error('Erro ao popular produtos padrão:', error.message);
-      setProducts(defaultProducts);
-    } else if (data) {
-      setProducts(data.map(mapFromDB));
-    }
   };
 
   const addProduct = async (product: Product) => {

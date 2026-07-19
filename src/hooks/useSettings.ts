@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { STORE_CONFIG } from '../config';
 
 export interface StoreSettings {
   name: string;
@@ -21,27 +20,25 @@ export interface StoreSettings {
   categories: string[];
 }
 
-// ID fixo da única linha de configurações (singleton)
 const SETTINGS_ID = '00000000-0000-0000-0000-000000000001';
 
-export const DEFAULT_SETTINGS: StoreSettings = {
-  name: STORE_CONFIG.STORE_NAME,
-  whatsapp: STORE_CONFIG.WHATSAPP_NUMBER,
-  logo: STORE_CONFIG.LOGO_URL || '',
+const EMPTY_SETTINGS: StoreSettings = {
+  name: '',
+  whatsapp: '',
+  logo: '',
   showName: true,
-  footerDescription: 'Especialistas em meias. Qualidade e conforto direto da fábrica para você.',
-  footerInfo1: 'Enviamos para todo o Brasil.',
-  footerInfo2: 'Atendimento de Seg a Sex.',
+  footerDescription: '',
+  footerInfo1: '',
+  footerInfo2: '',
   bannerActive: false,
-  bannerText: 'Frete Grátis acima de R$100 para todo o Brasil!',
+  bannerText: '',
   bannerImageUrl: '',
   instagramUrl: '',
   facebookUrl: '',
   tiktokUrl: '',
-  heroTitle: 'Catálogo Direto da Fábrica',
-  heroSubtitle:
-    'Qualidade premium, preço de atacado. Escolha seus modelos, monte seu carrinho e envie o pedido diretamente para o nosso WhatsApp.',
-  categories: ['Cano Alto', 'Cano Curto', 'Invisível', 'Social', 'Térmica', 'Esportiva', 'Compressão', 'Atacado'],
+  heroTitle: '',
+  heroSubtitle: '',
+  categories: [],
 };
 
 const parsePgArray = (val: unknown): string[] => {
@@ -80,23 +77,22 @@ const parsePgArray = (val: unknown): string[] => {
   return [];
 };
 
-// Mapeia linha do banco (snake_case) para StoreSettings (camelCase)
 const mapFromDB = (row: Record<string, unknown>): StoreSettings => ({
-  name: (row.name as string) ?? DEFAULT_SETTINGS.name,
-  whatsapp: (row.whatsapp as string) ?? DEFAULT_SETTINGS.whatsapp,
+  name: (row.name as string) ?? '',
+  whatsapp: (row.whatsapp as string) ?? '',
   logo: (row.logo as string) ?? '',
   showName: (row.show_name as boolean) ?? true,
-  footerDescription: (row.footer_description as string) ?? DEFAULT_SETTINGS.footerDescription,
-  footerInfo1: (row.footer_info1 as string) ?? DEFAULT_SETTINGS.footerInfo1,
-  footerInfo2: (row.footer_info2 as string) ?? DEFAULT_SETTINGS.footerInfo2,
+  footerDescription: (row.footer_description as string) ?? '',
+  footerInfo1: (row.footer_info1 as string) ?? '',
+  footerInfo2: (row.footer_info2 as string) ?? '',
   bannerActive: (row.banner_active as boolean) ?? false,
-  bannerText: (row.banner_text as string) ?? DEFAULT_SETTINGS.bannerText,
+  bannerText: (row.banner_text as string) ?? '',
   bannerImageUrl: (row.banner_image_url as string) ?? '',
   instagramUrl: (row.instagram_url as string) ?? '',
   facebookUrl: (row.facebook_url as string) ?? '',
   tiktokUrl: (row.tiktok_url as string) ?? '',
-  heroTitle: (row.hero_title as string) ?? DEFAULT_SETTINGS.heroTitle,
-  heroSubtitle: (row.hero_subtitle as string) ?? DEFAULT_SETTINGS.heroSubtitle,
+  heroTitle: (row.hero_title as string) ?? '',
+  heroSubtitle: (row.hero_subtitle as string) ?? '',
   categories: parsePgArray(row.categories),
 });
 
@@ -123,7 +119,7 @@ const mapToDB = (s: StoreSettings) => ({
 });
 
 export function useSettings() {
-  const [settings, setSettings] = useState<StoreSettings>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<StoreSettings>(EMPTY_SETTINGS);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -139,15 +135,14 @@ export function useSettings() {
 
     if (error) {
       console.error('Erro ao buscar configurações:', error.message);
-      setIsLoaded(true); // mesmo com erro, libera a renderização
+      setIsLoaded(true);
       return;
     }
 
     if (!data) {
-      // Linha não existe ainda: criar com valores padrão
       const { data: inserted, error: insertError } = await supabase
         .from('store_settings')
-        .upsert(mapToDB(DEFAULT_SETTINGS))
+        .upsert(mapToDB(EMPTY_SETTINGS))
         .select()
         .maybeSingle();
 
