@@ -1,57 +1,51 @@
 import { useState, useEffect } from 'react';
 import { Product } from '../types';
+import { collection, doc, getDocs, setDoc, deleteDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 export function useProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    fetch('/api/products')
-      .then(res => res.json())
-      .then(data => {
-        setProducts(data);
-        setIsLoaded(true);
-      })
-      .catch(err => {
+    const fetchProducts = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'products'));
+        const productsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+        setProducts(productsData);
+      } catch (err) {
         console.error('Failed to fetch products', err);
+      } finally {
         setIsLoaded(true);
-      });
+      }
+    };
+    fetchProducts();
   }, []);
 
-  const getAuthToken = () => {
-    // We would get this from Firebase auth context
-    return localStorage.getItem('auth_token') || '';
-  };
-
   const addProduct = async (product: Product) => {
-    const res = await fetch('/api/products', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getAuthToken()}` },
-      body: JSON.stringify(product)
-    });
-    if (res.ok) {
-      setProducts([...products, product]);
+    try {
+      await setDoc(doc(db, 'products', product.id), product);
+      setProducts(prev => [...prev, product]);
+    } catch (e) {
+      console.error('Error adding product', e);
     }
   };
 
   const updateProduct = async (updated: Product) => {
-    const res = await fetch(`/api/products/${updated.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getAuthToken()}` },
-      body: JSON.stringify(updated)
-    });
-    if (res.ok) {
-      setProducts(products.map(p => p.id === updated.id ? updated : p));
+    try {
+      await setDoc(doc(db, 'products', updated.id), updated);
+      setProducts(prev => prev.map(p => p.id === updated.id ? updated : p));
+    } catch (e) {
+      console.error('Error updating product', e);
     }
   };
 
   const removeProduct = async (id: string) => {
-    const res = await fetch(`/api/products/${id}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${getAuthToken()}` }
-    });
-    if (res.ok) {
-      setProducts(products.filter(p => p.id !== id));
+    try {
+      await deleteDoc(doc(db, 'products', id));
+      setProducts(prev => prev.filter(p => p.id !== id));
+    } catch (e) {
+      console.error('Error removing product', e);
     }
   };
 

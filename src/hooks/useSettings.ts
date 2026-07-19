@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { STORE_CONFIG } from '../config';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 export interface StoreSettings {
   name: string;
@@ -39,31 +41,26 @@ export function useSettings() {
   });
 
   useEffect(() => {
-    fetch('/api/settings')
-      .then(res => res.json())
-      .then(data => {
-        if (Object.keys(data).length > 0) {
-          setSettings({
-            ...settings,
-            ...data
-          });
+    const fetchSettings = async () => {
+      try {
+        const docRef = doc(db, 'settings', 'default');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setSettings(prev => ({ ...prev, ...docSnap.data() as StoreSettings }));
         }
-      })
-      .catch(err => console.error('Failed to fetch settings', err));
+      } catch (err) {
+        console.error('Failed to fetch settings', err);
+      }
+    };
+    fetchSettings();
   }, []);
 
-  const getAuthToken = () => {
-    return localStorage.getItem('auth_token') || '';
-  };
-
   const saveSettings = async (newSettings: StoreSettings) => {
-    const res = await fetch('/api/settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getAuthToken()}` },
-      body: JSON.stringify(newSettings)
-    });
-    if (res.ok) {
+    try {
+      await setDoc(doc(db, 'settings', 'default'), newSettings);
       setSettings(newSettings);
+    } catch (e) {
+      console.error('Failed to save settings', e);
     }
   };
 
