@@ -44,7 +44,7 @@ const EMPTY_SETTINGS: StoreSettings = {
 const parsePgArray = (val: unknown): string[] => {
   if (Array.isArray(val)) return val;
   if (typeof val === 'string') {
-    // Postgres array literal: {a,b,c} or {"a","b","c"}
+    // Literal de array do Postgres: {a,b,c} ou {"a","b","c"}
     if (val.startsWith('{') && val.endsWith('}')) {
       const inner = val.slice(1, -1);
       if (!inner) return [];
@@ -65,12 +65,12 @@ const parsePgArray = (val: unknown): string[] => {
       items.push(cur);
       return items.filter(Boolean);
     }
-    // JSON array string: ["a","b","c"] (column might be text, not text[])
+    // String de array JSON: ["a","b","c"] (coluna pode ser text, não text[])
     if (val.startsWith('[') && val.endsWith(']')) {
       try {
         const parsed = JSON.parse(val);
         if (Array.isArray(parsed)) return parsed.map(String);
-      } catch { /* ignore parse errors */ }
+      } catch { /* ignora erros de parse */ }
     }
     return [];
   }

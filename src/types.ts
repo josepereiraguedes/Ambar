@@ -11,7 +11,7 @@ export type Product = {
 };
 
 export type CartItem = {
-  id: string; // Unique combination of product, size, and color
+  id: string; // Combinação única de produto, tamanho e cor
   product: Product;
   quantity: number;
   size: string;

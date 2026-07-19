@@ -45,7 +45,7 @@ export function CartDrawer({ isOpen, onClose, cart, updateQuantity, removeItem, 
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
+          {/* Fundo Escuro */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -54,7 +54,7 @@ export function CartDrawer({ isOpen, onClose, cart, updateQuantity, removeItem, 
             className="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
           />
           
-          {/* Drawer */}
+          {/* Gaveta */}
           <motion.div
             initial={{ x: '100%' }}
             animate={{ x: 0 }}

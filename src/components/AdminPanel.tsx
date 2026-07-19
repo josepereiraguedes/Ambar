@@ -40,7 +40,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
   const [isSavingSettings, setIsSavingSettings] = useState(false);
   const [newCategory, setNewCategory] = useState('');
 
-  // Sync settings prop changes to settingsFormData state
+  // Sincroniza alterações das props de configurações para o state settingsFormData
   useEffect(() => {
     setSettingsFormData({
       ...settings,
@@ -80,7 +80,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 1600; // Wider for banners
+        const MAX_WIDTH = 1600; // Maior largura para banners
         const MAX_HEIGHT = 800;
         let width = img.width;
         let height = img.height;
@@ -119,7 +119,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 400; // Smaller size for logo
+        const MAX_WIDTH = 400; // Tamanho menor para o logo
         const MAX_HEIGHT = 400;
         let width = img.width;
         let height = img.height;
@@ -141,7 +141,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
         const ctx = canvas.getContext('2d');
         ctx?.drawImage(img, 0, 0, width, height);
         
-        const dataUrl = canvas.toDataURL('image/png'); // Using PNG for logos with transparency
+        const dataUrl = canvas.toDataURL('image/png'); // Usando PNG para logos com transparência
         setSettingsFormData(prev => ({ ...prev, logo: dataUrl }));
       };
       img.src = event.target?.result as string;
@@ -238,7 +238,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
       description: formData.description,
       price: parseFloat(formData.price.replace(',', '.')) || 0,
       oldPrice: isNaN(parsedOldPrice) || parsedOldPrice <= 0 ? undefined : parsedOldPrice,
-      image: formData.image || 'https://images.unsplash.com/photo-1582966772680-860e372bb558?w=800&q=80', // Fallback
+      image: formData.image || 'https://images.unsplash.com/photo-1582966772680-860e372bb558?w=800&q=80', // Padrão
       sizes: formData.sizes.split(',').map(s => s.trim()).filter(Boolean),
       colors: formData.colors.split(',').map(c => c.trim()).filter(Boolean),
       category: formData.category
@@ -312,7 +312,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                 <div className="flex flex-col sm:flex-row items-center gap-4">
                   {settingsFormData.logo ? (
                     <div className="w-24 h-24 rounded-lg overflow-hidden border border-gray-200 shrink-0 bg-white relative group flex items-center justify-center p-2">
-                      <img src={settingsFormData.logo} className="w-full h-full object-contain" alt="Logo Preview" />
+                      <img src={settingsFormData.logo} className="w-full h-full object-contain" alt="Pré-visualização da Logo" />
                       <button 
                         type="button"
                         onClick={() => setSettingsFormData({...settingsFormData, logo: ''})}
@@ -474,7 +474,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                         <div className="flex flex-col gap-3">
                           {settingsFormData.bannerImageUrl && (
                             <div className="w-full h-32 rounded-lg overflow-hidden border border-gray-200 shrink-0 bg-white relative group flex items-center justify-center p-2">
-                              <img src={settingsFormData.bannerImageUrl} className="w-full h-full object-cover" alt="Banner Preview" />
+                              <img src={settingsFormData.bannerImageUrl} className="w-full h-full object-cover" alt="Pré-visualização do Banner" />
                               <button 
                                 type="button"
                                 onClick={() => setSettingsFormData({...settingsFormData, bannerImageUrl: ''})}
@@ -564,7 +564,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                 <div className="flex items-center gap-4">
                   {formData.image ? (
                     <div className="w-24 h-24 rounded-lg overflow-hidden border border-gray-200 shrink-0 bg-white relative group">
-                      <img src={formData.image} className="w-full h-full object-cover" alt="Preview" />
+                      <img src={formData.image} className="w-full h-full object-cover" alt="Pré-visualização" />
                       <button 
                         type="button"
                         onClick={() => setFormData({...formData, image: ''})}

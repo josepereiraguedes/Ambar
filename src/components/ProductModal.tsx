@@ -13,7 +13,7 @@ export function ProductModal({ product, onClose, onAddToCart }: ProductModalProp
   const [size, setSize] = useState(product?.sizes[0] || '');
   const [color, setColor] = useState(product?.colors[0] || '');
 
-  // Reset selections when product changes
+  // Reinicia seleções quando o produto muda
   useEffect(() => {
     if (product) {
       setSize(product.sizes[0] || '');

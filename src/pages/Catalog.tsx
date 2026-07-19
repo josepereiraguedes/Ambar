@@ -59,7 +59,7 @@ export default function App() {
     });
     setToastMessage(`Adicionado: ${newItem.product.name}`);
     setTimeout(() => setToastMessage(null), 3000);
-    setSelectedProduct(null); // close modal if open
+    setSelectedProduct(null); // fecha o modal se estiver aberto
   };
 
   const updateQuantity = (id: string, delta: number) => {
@@ -89,13 +89,13 @@ export default function App() {
     if (sortBy === 'price-asc') return a.price - b.price;
     if (sortBy === 'price-desc') return b.price - a.price;
     if (sortBy === 'a-z') return a.name.localeCompare(b.name);
-    // newest (fallback)
+    // lançamentos (padrão)
     return b.id.localeCompare(a.id);
   });
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] font-sans">
-      {/* Header */}
+      {/* Cabeçalho */}
       <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-0 sm:h-24 flex flex-col sm:flex-row items-center justify-between relative overflow-visible">
           
@@ -165,7 +165,7 @@ export default function App() {
         </div>
       </header>
 
-      {/* Promotional Banner */}
+      {/* Banner Promocional */}
       {allLoaded && settings.bannerActive && (
         <div className="bg-[#F8F9FA]">
           {settings.bannerImageUrl ? (
@@ -184,7 +184,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Product Grid */}
+      {/* Grade de Produtos */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
           <h3 className="text-2xl font-bold text-gray-900">Catálogo de Meias</h3>
@@ -274,7 +274,7 @@ export default function App() {
         )}
       </main>
 
-      {/* Footer */}
+      {/* Rodapé */}
       <footer className="bg-gray-900 text-gray-400 py-6 mt-12 border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-8 text-center md:text-left">
           <div className="flex flex-col items-center md:items-start md:max-w-sm">
@@ -352,7 +352,7 @@ export default function App() {
         </div>
       </footer>
 
-      {/* WhatsApp Floating Button */}
+      {/* Botão Flutuante do WhatsApp */}
       {allLoaded && settings.whatsapp && (
         <a 
           href={`https://wa.me/${settings.whatsapp}?text=Olá! Estava navegando no catálogo e gostaria de tirar uma dúvida.`}
@@ -368,7 +368,7 @@ export default function App() {
         </a>
       )}
 
-      {/* Scroll to Top */}
+      {/* Voltar ao Topo */}
       <AnimatePresence>
         {isScrolled && (
           <motion.button
@@ -384,7 +384,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Toast Notification */}
+      {/* Notificação Toast */}
       <AnimatePresence>
         {toastMessage && (
           <motion.div
