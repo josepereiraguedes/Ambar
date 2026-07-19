@@ -15,6 +15,8 @@ export interface StoreSettings {
   instagramUrl?: string;
   facebookUrl?: string;
   tiktokUrl?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
 }
 
 export function useSettings() {
@@ -32,6 +34,8 @@ export function useSettings() {
     instagramUrl: '',
     facebookUrl: '',
     tiktokUrl: '',
+    heroTitle: 'Catálogo Direto da Fábrica',
+    heroSubtitle: 'Qualidade premium, preço de atacado. Escolha seus modelos, monte seu carrinho e envie o pedido diretamente para o nosso WhatsApp.',
   });
 
   useEffect(() => {
@@ -50,6 +54,8 @@ export function useSettings() {
         instagramUrl: parsed.instagramUrl ?? '',
         facebookUrl: parsed.facebookUrl ?? '',
         tiktokUrl: parsed.tiktokUrl ?? '',
+        heroTitle: parsed.heroTitle ?? 'Catálogo Direto da Fábrica',
+        heroSubtitle: parsed.heroSubtitle ?? 'Qualidade premium, preço de atacado. Escolha seus modelos, monte seu carrinho e envie o pedido diretamente para o nosso WhatsApp.',
       });
     } else {
       localStorage.setItem('@ambar:settings', JSON.stringify(settings));

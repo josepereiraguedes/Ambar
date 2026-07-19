@@ -308,6 +308,20 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
               </div>
 
               <div className="pt-4 border-t border-gray-200 mt-2">
+                <h4 className="text-sm font-bold text-gray-900 mb-4">Textos Iniciais</h4>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Título Principal</label>
+                    <input type="text" value={settingsFormData.heroTitle || ''} onChange={e => setSettingsFormData({...settingsFormData, heroTitle: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Catálogo Direto da Fábrica" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Subtítulo (Texto de apresentação)</label>
+                    <textarea value={settingsFormData.heroSubtitle || ''} onChange={e => setSettingsFormData({...settingsFormData, heroSubtitle: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none min-h-[80px]" placeholder="Qualidade premium..." />
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-gray-200 mt-2">
                 <h4 className="text-sm font-bold text-gray-900 mb-4">Configurações do Rodapé</h4>
                 <div className="space-y-4">
                   <div>

@@ -118,13 +118,10 @@ export default function App() {
           
           <div className="mt-4 sm:mt-0 text-center sm:absolute sm:left-1/2 sm:-translate-x-1/2 z-10 w-full sm:w-auto px-2 pointer-events-none">
             <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-white tracking-tight mb-1">
-              Catálogo Direto da Fábrica
+              {settings.heroTitle || 'Catálogo Direto da Fábrica'}
             </h2>
-            <p className="text-gray-400 text-xs sm:text-xs lg:text-sm max-w-md mx-auto hidden md:block">
-              Qualidade premium, preço de atacado. Escolha seus modelos, monte seu carrinho e envie o pedido diretamente para o nosso WhatsApp.
-            </p>
-            <p className="text-gray-400 text-xs sm:text-xs max-w-md mx-auto block md:hidden">
-              Qualidade premium, preço de atacado. Escolha seus modelos e envie para o WhatsApp.
+            <p className="text-gray-400 text-xs sm:text-xs lg:text-sm max-w-md mx-auto">
+              {settings.heroSubtitle || 'Qualidade premium, preço de atacado. Escolha seus modelos, monte seu carrinho e envie o pedido diretamente para o nosso WhatsApp.'}
             </p>
           </div>
 
