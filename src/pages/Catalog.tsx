@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ShoppingBag, Settings, Search, MessageCircle, ArrowUp, CheckCircle2, Instagram, Facebook, Music2 } from 'lucide-react';
+import { ShoppingBag, Search, MessageCircle, ArrowUp, CheckCircle2, Instagram, Facebook, Music2 } from 'lucide-react';
 import { ProductCard } from '../components/ProductCard';
 import { CartDrawer } from '../components/CartDrawer';
 import { ProductModal } from '../components/ProductModal';
@@ -8,9 +8,19 @@ import { STORE_CONFIG } from '../config';
 import { useProducts } from '../hooks/useProducts';
 import { useSettings } from '../hooks/useSettings';
 import { motion, AnimatePresence } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
+
+const CART_STORAGE_KEY = 'catalogoambar-cart';
 
 export default function App() {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    try {
+      const saved = localStorage.getItem(CART_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -18,15 +28,23 @@ export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const navigate = useNavigate();
 
-  const { products, isLoaded, addProduct, updateProduct, removeProduct } = useProducts();
-  const { settings, saveSettings } = useSettings();
+  const { products, isLoaded: productsLoaded, addProduct, updateProduct, removeProduct } = useProducts();
+  const { settings, isLoaded: settingsLoaded, saveSettings } = useSettings();
+
+  // Só renderiza o conteúdo quando AMBOS (produtos e configurações) estiverem prontos
+  const allLoaded = productsLoaded && settingsLoaded;
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 300);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  }, [cart]);
 
   const handleAddToCart = (newItem: CartItem) => {
     setCart(prev => {
@@ -61,7 +79,7 @@ export default function App() {
 
   const cartItemsCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
-  const categories = Array.from(new Set(products.map(p => p.category).filter(Boolean))) as string[];
+  const categories = Array.isArray(settings.categories) ? settings.categories : [];
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -77,29 +95,31 @@ export default function App() {
   });
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] font-sans">
+    <div
+      style={{ opacity: allLoaded ? 1 : 0.6, transition: 'opacity 0.25s ease-in-out' }}
+      className="min-h-screen bg-[#F8F9FA] font-sans"
+    >
       {/* Header */}
       <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-0 sm:h-24 flex flex-col sm:flex-row items-center justify-between relative overflow-hidden">
           
           <div className="w-full sm:w-auto flex items-center justify-between sm:justify-start z-20">
             <div className="flex items-center gap-2">
-              {settings.logo && (
-                <img src={settings.logo} alt="Logo" className="h-16 sm:h-20 w-auto object-contain" />
-              )}
-              {settings.showName !== false && (
-                <h1 className="text-xl sm:text-3xl font-extrabold text-orange-500 tracking-tight z-10">{settings.name}</h1>
+              {!allLoaded ? (
+                <div className="w-32 h-8 bg-gray-700 rounded-lg animate-pulse" />
+              ) : (
+                <>
+                  {settings.logo && (
+                    <img src={settings.logo} alt="Logo" className="h-16 sm:h-20 w-auto object-contain" />
+                  )}
+                  {settings.showName !== false && (
+                    <h1 className="text-xl sm:text-3xl font-extrabold text-orange-500 tracking-tight z-10">{settings.name}</h1>
+                  )}
+                </>
               )}
             </div>
 
             <div className="flex items-center gap-2 sm:hidden">
-              <button 
-                onClick={() => setIsAdminOpen(true)}
-                className="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-full transition-colors"
-                title="Gerenciar Catálogo"
-              >
-                <Settings className="w-5 h-5" />
-              </button>
               <button 
                 onClick={() => setIsCartOpen(true)}
                 className="relative p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-full transition-colors"
@@ -115,12 +135,21 @@ export default function App() {
           </div>
           
           <div className="mt-4 sm:mt-0 text-center sm:absolute sm:left-1/2 sm:-translate-x-1/2 z-10 w-full sm:w-auto px-2 pointer-events-none">
-            <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-white tracking-tight mb-1">
-              {settings.heroTitle || 'Catálogo Direto da Fábrica'}
-            </h2>
-            <p className="text-gray-400 text-xs sm:text-xs lg:text-sm max-w-md mx-auto">
-              {settings.heroSubtitle || 'Qualidade premium, preço de atacado. Escolha seus modelos, monte seu carrinho e envie o pedido diretamente para o nosso WhatsApp.'}
-            </p>
+            {!allLoaded ? (
+              <>
+                <div className="h-7 w-64 bg-gray-700 rounded-lg animate-pulse mx-auto mb-2" />
+                <div className="h-4 w-80 bg-gray-800 rounded-lg animate-pulse mx-auto" />
+              </>
+            ) : (
+              <>
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-white tracking-tight mb-1">
+                  {settings.heroTitle || 'Catálogo Direto da Fábrica'}
+                </h2>
+                <p className="text-gray-400 text-xs sm:text-xs lg:text-sm max-w-md mx-auto">
+                  {settings.heroSubtitle || 'Qualidade premium, preço de atacado. Escolha seus modelos, monte seu carrinho e envie o pedido diretamente para o nosso WhatsApp.'}
+                </p>
+              </>
+            )}
           </div>
 
           <div className="hidden sm:flex items-center gap-2 z-20">
@@ -141,7 +170,7 @@ export default function App() {
       </header>
 
       {/* Promotional Banner */}
-      {settings.bannerActive && (
+      {allLoaded && settings.bannerActive && (
         <div className="bg-[#F8F9FA]">
           {settings.bannerImageUrl ? (
             <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
@@ -189,7 +218,7 @@ export default function App() {
           </div>
         </div>
 
-        {categories.length > 0 && (
+        {allLoaded && categories.length > 0 && (
           <div className="flex overflow-x-auto gap-2 pb-4 mb-6 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
             <button 
               onClick={() => setSelectedCategory(null)}
@@ -209,16 +238,16 @@ export default function App() {
           </div>
         )}
         
-        {!isLoaded ? (
+        {!allLoaded ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
             {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
               <div key={i} className="flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-pulse">
-                <div className="aspect-square bg-gray-200"></div>
+                <div className="aspect-square bg-gray-200" />
                 <div className="p-5">
-                  <div className="h-5 bg-gray-200 rounded w-3/4 mb-3"></div>
-                  <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-2/3 mb-4"></div>
-                  <div className="h-10 bg-gray-200 rounded-xl"></div>
+                  <div className="h-5 bg-gray-200 rounded w-3/4 mb-3" />
+                  <div className="h-4 bg-gray-200 rounded w-full mb-2" />
+                  <div className="h-4 bg-gray-200 rounded w-2/3 mb-4" />
+                  <div className="h-10 bg-gray-200 rounded-xl" />
                 </div>
               </div>
             ))}
@@ -254,51 +283,81 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-8 text-center md:text-left">
           <div className="flex flex-col items-center md:items-start md:max-w-sm">
             <div className="flex items-center gap-2 mb-2">
-              {settings.logo && (
-                <img src={settings.logo} alt="Logo" className="h-16 sm:h-20 w-auto object-contain" />
-              )}
-              {settings.showName !== false && (
-                <h4 className="text-xl sm:text-3xl font-extrabold text-orange-500 tracking-tight z-10">{settings.name}</h4>
+              {!allLoaded ? (
+                <div className="w-32 h-6 bg-gray-800 rounded-lg animate-pulse" />
+              ) : (
+                <>
+                  {settings.logo && (
+                    <img src={settings.logo} alt="Logo" className="h-16 sm:h-20 w-auto object-contain" />
+                  )}
+                  {settings.showName !== false && (
+                    <h4 className="text-xl sm:text-3xl font-extrabold text-orange-500 tracking-tight z-10">{settings.name}</h4>
+                  )}
+                </>
               )}
             </div>
-            <p className="text-sm">{settings.footerDescription}</p>
+            {!allLoaded ? (
+              <div className="h-4 w-48 bg-gray-800 rounded animate-pulse" />
+            ) : (
+              <p className="text-sm">{settings.footerDescription}</p>
+            )}
           </div>
           
           <div className="flex flex-col sm:flex-row gap-8 sm:gap-16 md:mt-4">
             <div>
               <h4 className="text-white font-bold text-lg mb-2">Contato</h4>
-              <p className="text-sm mb-3">WhatsApp: {settings.whatsapp.replace(/(\d{2})(\d{2})(\d{4,5})(\d{4})/, '+$1 ($2) $3-$4')}</p>
-              {(settings.instagramUrl || settings.facebookUrl || settings.tiktokUrl) && (
-                <div className="flex gap-4 items-center justify-center sm:justify-start">
-                  {settings.instagramUrl && (
-                    <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title="Instagram">
-                      <Instagram className="w-5 h-5" />
-                    </a>
+              {!allLoaded ? (
+                <>
+                  <div className="h-4 w-36 bg-gray-800 rounded animate-pulse mb-3" />
+                  <div className="flex gap-4">
+                    {[1, 2, 3].map(i => <div key={i} className="w-5 h-5 bg-gray-800 rounded animate-pulse" />)}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm mb-3">WhatsApp: {settings.whatsapp.replace(/(\d{2})(\d{2})(\d{4,5})(\d{4})/, '+$1 ($2) $3-$4')}</p>
+                  {(settings.instagramUrl || settings.facebookUrl || settings.tiktokUrl) && (
+                    <div className="flex gap-4 items-center justify-center sm:justify-start">
+                      {settings.instagramUrl && (
+                        <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title="Instagram">
+                          <Instagram className="w-5 h-5" />
+                        </a>
+                      )}
+                      {settings.facebookUrl && (
+                        <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title="Facebook">
+                          <Facebook className="w-5 h-5" />
+                        </a>
+                      )}
+                      {settings.tiktokUrl && (
+                        <a href={settings.tiktokUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title="TikTok">
+                          <Music2 className="w-5 h-5" />
+                        </a>
+                      )}
+                    </div>
                   )}
-                  {settings.facebookUrl && (
-                    <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title="Facebook">
-                      <Facebook className="w-5 h-5" />
-                    </a>
-                  )}
-                  {settings.tiktokUrl && (
-                    <a href={settings.tiktokUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title="TikTok">
-                      <Music2 className="w-5 h-5" />
-                    </a>
-                  )}
-                </div>
+                </>
               )}
             </div>
             <div>
               <h4 className="text-white font-bold text-lg mb-2">Informações</h4>
-              {settings.footerInfo1 && <p className="text-sm mb-1">{settings.footerInfo1}</p>}
-              {settings.footerInfo2 && <p className="text-sm">{settings.footerInfo2}</p>}
+              {!allLoaded ? (
+                <>
+                  <div className="h-4 w-40 bg-gray-800 rounded animate-pulse mb-1" />
+                  <div className="h-4 w-32 bg-gray-800 rounded animate-pulse" />
+                </>
+              ) : (
+                <>
+                  {settings.footerInfo1 && <p className="text-sm mb-1">{settings.footerInfo1}</p>}
+                  {settings.footerInfo2 && <p className="text-sm">{settings.footerInfo2}</p>}
+                </>
+              )}
             </div>
           </div>
         </div>
       </footer>
 
       {/* WhatsApp Floating Button */}
-      {settings.whatsapp && (
+      {allLoaded && settings.whatsapp && (
         <a 
           href={`https://wa.me/${settings.whatsapp}?text=Olá! Estava navegando no catálogo e gostaria de tirar uma dúvida.`}
           target="_blank"

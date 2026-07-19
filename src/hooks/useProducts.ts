@@ -1,51 +1,117 @@
 import { useState, useEffect } from 'react';
 import { Product } from '../types';
-import { collection, doc, getDocs, setDoc, deleteDoc } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { supabase } from '../lib/supabase';
+import { products as defaultProducts } from '../data';
+
+// Mapeia linha do banco (snake_case) para tipo Product (camelCase)
+const mapFromDB = (row: Record<string, unknown>): Product => ({
+  id: row.id as string,
+  name: row.name as string,
+  description: row.description as string,
+  price: Number(row.price),
+  oldPrice: row.old_price != null ? Number(row.old_price) : undefined,
+  image: row.image as string,
+  sizes: (row.sizes as string[]) || [],
+  colors: (row.colors as string[]) || [],
+  category: row.category as string | undefined,
+});
+
+// Mapeia tipo Product (camelCase) para linha do banco (snake_case)
+const mapToDB = (product: Product) => ({
+  name: product.name,
+  description: product.description,
+  price: product.price,
+  old_price: product.oldPrice ?? null,
+  image: product.image,
+  sizes: product.sizes,
+  colors: product.colors,
+  category: product.category ?? null,
+});
 
 export function useProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'products'));
-        const productsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
-        setProducts(productsData);
-      } catch (err) {
-        console.error('Failed to fetch products', err);
-      } finally {
-        setIsLoaded(true);
-      }
-    };
     fetchProducts();
   }, []);
 
+  const fetchProducts = async () => {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('Erro ao buscar produtos:', error.message);
+      setProducts(defaultProducts);
+      setIsLoaded(true);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      // Banco vazio: inserir produtos padrão
+      await seedDefaultProducts();
+    } else {
+      setProducts(data.map(mapFromDB));
+    }
+    setIsLoaded(true);
+  };
+
+  const seedDefaultProducts = async () => {
+    const toInsert = defaultProducts.map(mapToDB);
+    const { data, error } = await supabase
+      .from('products')
+      .insert(toInsert)
+      .select();
+
+    if (error) {
+      console.error('Erro ao popular produtos padrão:', error.message);
+      setProducts(defaultProducts);
+    } else if (data) {
+      setProducts(data.map(mapFromDB));
+    }
+  };
+
   const addProduct = async (product: Product) => {
-    try {
-      await setDoc(doc(db, 'products', product.id), product);
-      setProducts(prev => [...prev, product]);
-    } catch (e) {
-      console.error('Error adding product', e);
+    const { data, error } = await supabase
+      .from('products')
+      .insert(mapToDB(product))
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Erro ao adicionar produto:', error.message);
+    } else if (data) {
+      setProducts(prev => [...prev, mapFromDB(data)]);
     }
   };
 
   const updateProduct = async (updated: Product) => {
-    try {
-      await setDoc(doc(db, 'products', updated.id), updated);
-      setProducts(prev => prev.map(p => p.id === updated.id ? updated : p));
-    } catch (e) {
-      console.error('Error updating product', e);
+    const { data, error } = await supabase
+      .from('products')
+      .update(mapToDB(updated))
+      .eq('id', updated.id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Erro ao atualizar produto:', error.message);
+    } else if (data) {
+      setProducts(prev => prev.map(p => p.id === updated.id ? mapFromDB(data) : p));
     }
   };
 
   const removeProduct = async (id: string) => {
-    try {
-      await deleteDoc(doc(db, 'products', id));
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Erro ao remover produto:', error.message);
+    } else {
       setProducts(prev => prev.filter(p => p.id !== id));
-    } catch (e) {
-      console.error('Error removing product', e);
     }
   };
 

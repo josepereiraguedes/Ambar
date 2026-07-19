@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, type ChangeEvent, type FormEvent } from 'react';
 import { X, Plus, Edit2, Trash2, Image as ImageIcon, Upload } from 'lucide-react';
 import { Product } from '../types';
 
@@ -12,7 +12,7 @@ interface AdminPanelProps {
   onUpdate: (p: Product) => void;
   onRemove: (id: string) => void;
   settings: StoreSettings;
-  onUpdateSettings: (s: StoreSettings) => void;
+  onUpdateSettings: (s: StoreSettings) => Promise<void>;
 }
 
 export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemove, settings, onUpdateSettings }: AdminPanelProps) {
@@ -32,12 +32,46 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
     category: ''
   });
 
-  const [settingsFormData, setSettingsFormData] = useState({ ...settings });
+  const [settingsFormData, setSettingsFormData] = useState(() => ({
+    ...settings,
+    categories: Array.isArray(settings.categories) ? settings.categories : [],
+  }));
+  const [settingsError, setSettingsError] = useState<string | null>(null);
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
+  const [newCategory, setNewCategory] = useState('');
+
+  // Sync settings prop changes to settingsFormData state
+  useEffect(() => {
+    setSettingsFormData({
+      ...settings,
+      categories: Array.isArray(settings.categories) ? settings.categories : [],
+    });
+  }, [settings]);
   
   const logoInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
 
-  const handleBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const cats = (): string[] => Array.isArray(settingsFormData.categories) ? settingsFormData.categories : [];
+
+  const addCategory = () => {
+    const trimmed = newCategory.trim();
+    if (!trimmed) return;
+    if (cats().includes(trimmed)) return;
+    setSettingsFormData(prev => ({
+      ...prev,
+      categories: [...(Array.isArray(prev.categories) ? prev.categories : []), trimmed],
+    }));
+    setNewCategory('');
+  };
+
+  const removeCategory = (cat: string) => {
+    setSettingsFormData(prev => ({
+      ...prev,
+      categories: (Array.isArray(prev.categories) ? prev.categories : []).filter(c => c !== cat),
+    }));
+  };
+
+  const handleBannerUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -76,7 +110,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
     reader.readAsDataURL(file);
   };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -115,10 +149,19 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
     reader.readAsDataURL(file);
   };
 
-  const handleSaveSettings = (e: React.FormEvent) => {
+  const handleSaveSettings = async (e: FormEvent) => {
     e.preventDefault();
-    onUpdateSettings(settingsFormData);
-    setActiveTab('products');
+    setSettingsError(null);
+    setIsSavingSettings(true);
+    try {
+      await onUpdateSettings(settingsFormData);
+      setSettingsError(null);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Erro desconhecido';
+      setSettingsError(msg);
+    } finally {
+      setIsSavingSettings(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -145,7 +188,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
     setIsFormOpen(true);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -184,7 +227,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     
     const parsedOldPrice = parseFloat(formData.oldPrice.replace(',', '.'));
@@ -230,7 +273,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
             Catálogo de Produtos
           </button>
           <button 
-            onClick={() => { setActiveTab('settings'); setSettingsFormData({ ...settings }); }}
+            onClick={() => { setActiveTab('settings'); setSettingsFormData({ ...settings, categories: Array.isArray(settings.categories) ? settings.categories : [] }); }}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'settings' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
           >
             Configurações da Loja
@@ -240,6 +283,17 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
         {activeTab === 'settings' ? (
           <form onSubmit={handleSaveSettings} className="bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-sm">
             <h3 className="text-xl font-bold text-gray-900 mb-6">Configurações da Loja</h3>
+            
+            {settingsError && (
+              <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+                <p className="font-semibold mb-1">Erro ao salvar:</p>
+                <p>{settingsError}</p>
+                <p className="mt-2 text-xs text-red-500">
+                  ⚠ Pode ser necessário criar a coluna <code className="bg-red-100 px-1 rounded">categories</code> na tabela <code className="bg-red-100 px-1 rounded">store_settings</code> do Supabase.
+                  Abra o SQL Editor do Supabase e execute o arquivo <strong>supabase-migration.sql</strong>.
+                </p>
+              </div>
+            )}
             
             <div className="grid grid-cols-1 gap-5">
               <div>
@@ -358,6 +412,43 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
               </div>
 
               <div className="pt-4 border-t border-gray-200 mt-2">
+                <h4 className="text-sm font-bold text-gray-900 mb-4">Categorias de Produtos</h4>
+                <p className="text-xs text-gray-500 mb-3">Gerencie as categorias disponíveis para classificar os produtos do catálogo.</p>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {(Array.isArray(settingsFormData.categories) ? settingsFormData.categories : []).map(cat => (
+                    <span key={cat} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 rounded-full text-sm font-medium text-gray-700">
+                      {cat}
+                      <button
+                        type="button"
+                        onClick={() => removeCategory(cat)}
+                        className="text-gray-400 hover:text-red-500 transition-colors"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newCategory}
+                    onChange={e => setNewCategory(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addCategory(); } }}
+                    placeholder="Nova categoria..."
+                    className="flex-1 p-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={addCategory}
+                    className="flex items-center gap-1 px-4 py-2 bg-orange-600 text-white rounded-lg text-sm font-medium hover:bg-orange-700 transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Adicionar
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-gray-200 mt-2">
                 <h4 className="text-sm font-bold text-gray-900 mb-4">Banner Promocional</h4>
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
@@ -421,10 +512,13 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
             </div>
 
             <div className="mt-8 flex flex-col-reverse sm:flex-row justify-end gap-3 pt-6 border-t border-gray-200">
-              <button type="submit" className="px-6 py-2.5 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors shadow-sm">
-                Salvar Configurações
+              <button type="submit" disabled={isSavingSettings} className="px-6 py-2.5 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors shadow-sm">
+                {isSavingSettings ? 'Salvando...' : 'Salvar Configurações'}
               </button>
             </div>
+            {settingsError && (
+              <div className="mt-4 p-3 bg-red-50 border border-red-300 rounded-lg text-red-700 text-sm">{settingsError}</div>
+            )}
           </form>
         ) : isFormOpen ? (
           <form onSubmit={handleSubmit} className="bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-sm">
@@ -459,14 +553,9 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                   className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                 >
                   <option value="">Selecione uma categoria...</option>
-                  <option value="Cano Alto">Cano Alto</option>
-                  <option value="Cano Curto">Cano Curto</option>
-                  <option value="Invisível">Invisível</option>
-                  <option value="Social">Social</option>
-                  <option value="Térmica">Térmica</option>
-                  <option value="Esportiva">Esportiva</option>
-                  <option value="Compressão">Compressão</option>
-                  <option value="Atacado">Atacado</option>
+                  {(settings.categories || []).map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
                 </select>
               </div>
 
