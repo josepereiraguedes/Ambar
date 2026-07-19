@@ -260,7 +260,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
       <div className="max-w-4xl mx-auto p-4 sm:p-6">
         <div className="flex items-center justify-between mb-6 sticky top-0 bg-white py-4 border-b">
           <h2 className="text-2xl font-bold text-gray-900">Gerenciar</h2>
-          <button onClick={onClose} className="p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">
+          <button onClick={onClose} className="p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">
             <X className="w-6 h-6 text-gray-700" />
           </button>
         </div>
@@ -268,13 +268,13 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
         <div className="flex gap-4 mb-6">
           <button 
             onClick={() => { setActiveTab('products'); setIsFormOpen(false); }}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'products' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+            className={`px-5 py-2.5 rounded-lg font-medium transition-colors ${activeTab === 'products' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
           >
             Catálogo de Produtos
           </button>
           <button 
             onClick={() => { setActiveTab('settings'); setSettingsFormData({ ...settings, categories: Array.isArray(settings.categories) ? settings.categories : [] }); }}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'settings' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+            className={`px-5 py-2.5 rounded-lg font-medium transition-colors ${activeTab === 'settings' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
           >
             Configurações da Loja
           </button>
@@ -309,7 +309,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Logo da Loja</label>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-center gap-4">
                   {settingsFormData.logo ? (
                     <div className="w-24 h-24 rounded-lg overflow-hidden border border-gray-200 shrink-0 bg-white relative group flex items-center justify-center p-2">
                       <img src={settingsFormData.logo} className="w-full h-full object-contain" alt="Logo Preview" />
@@ -337,7 +337,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                     <button 
                       type="button"
                       onClick={() => logoInputRef.current?.click()}
-                      className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors mb-2"
+                      className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors mb-2"
                     >
                       <Upload className="w-4 h-4" />
                       Fazer Upload da Logo
@@ -641,13 +641,13 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                      <p className="text-orange-600 font-semibold text-sm">R$ {p.price.toFixed(2).replace('.', ',')}</p>
                    </div>
                    <div className="flex flex-col gap-2 shrink-0">
-                     <button onClick={() => handleOpenForm(p)} className="p-2 text-gray-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors">
-                       <Edit2 className="w-4 h-4" />
-                     </button>
-                     <button onClick={() => { if(window.confirm('Excluir este produto?')) onRemove(p.id); }} className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                       <Trash2 className="w-4 h-4" />
-                     </button>
-                   </div>
+                      <button onClick={() => handleOpenForm(p)} className="p-3 text-gray-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors">
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => { if(window.confirm('Excluir este produto?')) onRemove(p.id); }} className="p-3 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                 </div>
               ))}
               

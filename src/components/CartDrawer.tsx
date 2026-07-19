@@ -64,7 +64,7 @@ export function CartDrawer({ isOpen, onClose, cart, updateQuantity, removeItem, 
           >
             <div className="px-6 py-4 border-b flex items-center justify-between bg-gray-50">
               <h2 className="text-lg font-bold text-gray-900">Seu Carrinho</h2>
-              <button onClick={onClose} className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-200 rounded-full transition-colors">
+              <button onClick={onClose} className="p-3 text-gray-500 hover:text-gray-900 hover:bg-gray-200 rounded-full transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -79,7 +79,7 @@ export function CartDrawer({ isOpen, onClose, cart, updateQuantity, removeItem, 
                   </p>
                   <button 
                     onClick={onClose} 
-                    className="px-6 py-3 bg-orange-600 text-white rounded-xl font-medium hover:bg-orange-700 transition-colors"
+                    className="px-6 py-3.5 bg-orange-600 text-white rounded-xl font-medium hover:bg-orange-700 transition-colors"
                   >
                     Ver Catálogo
                   </button>
@@ -96,19 +96,19 @@ export function CartDrawer({ isOpen, onClose, cart, updateQuantity, removeItem, 
                         <p className="text-xs text-gray-500 mb-3">{item.size} • {item.color}</p>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-1">
-                            <button onClick={() => updateQuantity(item.id, -1)} className="p-1.5 hover:bg-white rounded shadow-sm text-gray-600 transition-colors">
-                              <Minus className="w-3 h-3" />
+                            <button onClick={() => updateQuantity(item.id, -1)} className="p-2.5 hover:bg-white rounded shadow-sm text-gray-600 transition-colors">
+                              <Minus className="w-4 h-4" />
                             </button>
                             <span className="text-sm font-medium w-4 text-center">{item.quantity}</span>
-                            <button onClick={() => updateQuantity(item.id, 1)} className="p-1.5 hover:bg-white rounded shadow-sm text-gray-600 transition-colors">
-                              <Plus className="w-3 h-3" />
+                            <button onClick={() => updateQuantity(item.id, 1)} className="p-2.5 hover:bg-white rounded shadow-sm text-gray-600 transition-colors">
+                              <Plus className="w-4 h-4" />
                             </button>
                           </div>
                           <div className="flex items-center gap-3">
                             <span className="font-semibold text-gray-900 text-sm">
                               R$ {(item.product.price * item.quantity).toFixed(2).replace('.', ',')}
                             </span>
-                            <button onClick={() => removeItem(item.id)} className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors">
+                            <button onClick={() => removeItem(item.id)} className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
@@ -129,7 +129,7 @@ export function CartDrawer({ isOpen, onClose, cart, updateQuantity, removeItem, 
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="Como gostaria de ser chamado?"
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-sm"
+                    className="w-full px-4 min-h-[44px] rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-sm"
                   />
                 </div>
                 <div className="flex items-center justify-between text-lg font-bold text-gray-900 pt-2 border-t border-gray-200">
@@ -140,14 +140,14 @@ export function CartDrawer({ isOpen, onClose, cart, updateQuantity, removeItem, 
                   href={getWhatsAppLink()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-3.5 px-4 rounded-xl font-medium transition-colors shadow-sm"
+                  className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-4 px-4 rounded-xl font-medium transition-colors shadow-sm"
                 >
                   <MessageCircle className="w-5 h-5" />
                   Enviar Pedido via WhatsApp
                 </a>
                 <button
                   onClick={onClose}
-                  className="w-full py-3 px-4 rounded-xl font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
+                  className="w-full py-3.5 px-4 rounded-xl font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
                 >
                   Continuar Comprando
                 </button>

@@ -55,7 +55,7 @@ export function ProductCard({ product, onAddToCart, onView }: ProductCardProps) 
                 <button
                   key={s}
                   onClick={() => setSize(s)}
-                  className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${size === s ? 'bg-orange-600 border-orange-600 text-white' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'}`}
+                  className={`px-4 py-2.5 text-sm rounded-md border transition-colors ${size === s ? 'bg-orange-600 border-orange-600 text-white' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'}`}
                 >
                   {s}
                 </button>
@@ -70,7 +70,7 @@ export function ProductCard({ product, onAddToCart, onView }: ProductCardProps) 
                 <button
                   key={c}
                   onClick={() => setColor(c)}
-                  className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${color === c ? 'bg-orange-600 border-orange-600 text-white' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'}`}
+                  className={`px-4 py-2.5 text-sm rounded-md border transition-colors ${color === c ? 'bg-orange-600 border-orange-600 text-white' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'}`}
                 >
                   {c}
                 </button>
@@ -92,7 +92,7 @@ export function ProductCard({ product, onAddToCart, onView }: ProductCardProps) 
           </div>
           <button
             onClick={handleAdd}
-            className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-lg font-medium transition-colors"
           >
             <ShoppingCart className="w-4 h-4" />
             Adicionar

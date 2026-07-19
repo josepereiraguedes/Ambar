@@ -44,7 +44,7 @@ export function ProductModal({ product, onClose, onAddToCart }: ProductModalProp
         >
           <button 
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 p-2 bg-white/80 hover:bg-white backdrop-blur-sm rounded-full text-gray-500 hover:text-gray-900 transition-colors shadow-sm border border-gray-100"
+            className="absolute top-4 right-4 z-10 p-3 bg-white/80 hover:bg-white backdrop-blur-sm rounded-full text-gray-500 hover:text-gray-900 transition-colors shadow-sm border border-gray-100"
           >
             <X className="w-5 h-5" />
           </button>
@@ -69,7 +69,7 @@ export function ProductModal({ product, onClose, onAddToCart }: ProductModalProp
             </div>
           </div>
 
-          <div className="w-full md:w-1/2 p-6 sm:p-8 md:p-10 flex flex-col overflow-y-auto">
+          <div className="w-full md:w-1/2 p-5 sm:p-8 md:p-10 flex flex-col overflow-y-auto">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{product.name}</h2>
             <div className="flex flex-col mb-6">
               {product.oldPrice && product.oldPrice > product.price && (
@@ -94,7 +94,7 @@ export function ProductModal({ product, onClose, onAddToCart }: ProductModalProp
                     <button
                       key={s}
                       onClick={() => setSize(s)}
-                      className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${
+                      className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
                         size === s 
                           ? 'border-gray-900 bg-gray-900 text-white shadow-md' 
                           : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50'
@@ -113,7 +113,7 @@ export function ProductModal({ product, onClose, onAddToCart }: ProductModalProp
                     <button
                       key={c}
                       onClick={() => setColor(c)}
-                      className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${
+                      className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
                         color === c 
                           ? 'border-gray-900 bg-gray-900 text-white shadow-md' 
                           : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50'

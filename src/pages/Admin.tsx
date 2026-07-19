@@ -35,7 +35,7 @@ export function Admin() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-950 p-4 font-sans">
-        <div className="bg-gray-900 border border-gray-800 p-8 rounded-3xl shadow-2xl max-w-md w-full relative overflow-hidden">
+        <div className="bg-gray-900 border border-gray-800 p-6 sm:p-8 rounded-3xl shadow-2xl max-w-md w-full relative overflow-hidden">
           {/* Ambient Top Glow */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent blur-md"></div>
           

@@ -97,7 +97,7 @@ export default function App() {
     <div className="min-h-screen bg-[#F8F9FA] font-sans">
       {/* Header */}
       <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-0 sm:h-24 flex flex-col sm:flex-row items-center justify-between relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-0 sm:h-24 flex flex-col sm:flex-row items-center justify-between relative overflow-visible">
           
           <div className="w-full sm:w-auto flex items-center justify-between sm:justify-start z-20">
             <div className="flex items-center gap-2">
@@ -118,7 +118,7 @@ export default function App() {
             <div className="flex items-center gap-2 sm:hidden">
               <button 
                 onClick={() => setIsCartOpen(true)}
-                className="relative p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-full transition-colors"
+                className="relative p-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-full transition-colors"
               >
                 <ShoppingBag className="w-6 h-6" />
                 {cartItemsCount > 0 && (
@@ -141,7 +141,7 @@ export default function App() {
                 <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-white tracking-tight mb-1">
                   {settings.heroTitle || 'Catálogo Direto da Fábrica'}
                 </h2>
-                <p className="text-gray-400 text-xs sm:text-xs lg:text-sm max-w-md mx-auto">
+                <p className="text-gray-400 text-sm sm:text-sm lg:text-base max-w-md mx-auto">
                   {settings.heroSubtitle || 'Qualidade premium, preço de atacado. Escolha seus modelos, monte seu carrinho e envie o pedido diretamente para o nosso WhatsApp.'}
                 </p>
               </>
@@ -151,7 +151,7 @@ export default function App() {
           <div className="hidden sm:flex items-center gap-2 z-20">
             <button 
               onClick={() => setIsCartOpen(true)}
-              className="relative p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-full transition-colors"
+              className="relative p-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-full transition-colors"
             >
               <ShoppingBag className="w-6 h-6" />
               {cartItemsCount > 0 && (
@@ -215,7 +215,7 @@ export default function App() {
         </div>
 
         {allLoaded && categories.length > 0 && (
-          <div className="flex overflow-x-auto gap-2 pb-4 mb-6 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
+          <div className="flex overflow-x-auto gap-2 pb-4 mb-6 -mx-4 px-4 sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">
             <button 
               onClick={() => setSelectedCategory(null)}
               className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors border ${selectedCategory === null ? 'bg-orange-600 text-white border-orange-600' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'}`}
@@ -391,7 +391,7 @@ export default function App() {
             initial={{ opacity: 0, y: 50, x: '-50%' }}
             animate={{ opacity: 1, y: 0, x: '-50%' }}
             exit={{ opacity: 0, y: 50, x: '-50%' }}
-            className="fixed bottom-6 left-1/2 z-50 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-gray-800"
+            className="fixed bottom-6 left-1/2 z-50 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-gray-800 max-w-[calc(100vw-2rem)] break-words"
           >
             <CheckCircle2 className="w-5 h-5 text-[#25D366]" />
             <span className="font-medium">{toastMessage}</span>
