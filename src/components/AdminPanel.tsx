@@ -244,12 +244,12 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
             <div className="grid grid-cols-1 gap-5">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Nome da Loja/Fábrica</label>
-                <input required type="text" value={settingsFormData.name} onChange={e => setSettingsFormData({...settingsFormData, name: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Ex: Ambar" />
+                <input required type="text" value={settingsFormData.name} onChange={e => setSettingsFormData({...settingsFormData, name: e.target.value})} className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Ex: Ambar" />
               </div>
               
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Número do WhatsApp</label>
-                <input required type="text" value={settingsFormData.whatsapp} onChange={e => setSettingsFormData({...settingsFormData, whatsapp: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="5511999999999" />
+                <input required type="text" value={settingsFormData.whatsapp} onChange={e => setSettingsFormData({...settingsFormData, whatsapp: e.target.value})} className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="5511999999999" />
                 <p className="text-xs text-gray-500 mt-1">Coloque o Código do País (55) + DDD + Número. Apenas números.</p>
               </div>
 
@@ -289,7 +289,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                       Fazer Upload da Logo
                     </button>
                     <p className="text-xs text-gray-500">Ou cole a URL da logo abaixo:</p>
-                    <input type="url" value={settingsFormData.logo} onChange={e => setSettingsFormData({...settingsFormData, logo: e.target.value})} className="w-full mt-1 p-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" placeholder="https://..." />
+                    <input type="url" value={settingsFormData.logo} onChange={e => setSettingsFormData({...settingsFormData, logo: e.target.value})} className="w-full mt-1 p-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" placeholder="https://..." />
                   </div>
                 </div>
               </div>
@@ -312,11 +312,11 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Título Principal</label>
-                    <input type="text" value={settingsFormData.heroTitle || ''} onChange={e => setSettingsFormData({...settingsFormData, heroTitle: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Catálogo Direto da Fábrica" />
+                    <input type="text" value={settingsFormData.heroTitle || ''} onChange={e => setSettingsFormData({...settingsFormData, heroTitle: e.target.value})} className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Catálogo Direto da Fábrica" />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Subtítulo (Texto de apresentação)</label>
-                    <textarea value={settingsFormData.heroSubtitle || ''} onChange={e => setSettingsFormData({...settingsFormData, heroSubtitle: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none min-h-[80px]" placeholder="Qualidade premium..." />
+                    <textarea value={settingsFormData.heroSubtitle || ''} onChange={e => setSettingsFormData({...settingsFormData, heroSubtitle: e.target.value})} className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none min-h-[80px]" placeholder="Qualidade premium..." />
                   </div>
                 </div>
               </div>
@@ -326,15 +326,15 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Descrição do Rodapé</label>
-                    <input type="text" value={settingsFormData.footerDescription || ''} onChange={e => setSettingsFormData({...settingsFormData, footerDescription: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Especialistas em meias..." />
+                    <input type="text" value={settingsFormData.footerDescription || ''} onChange={e => setSettingsFormData({...settingsFormData, footerDescription: e.target.value})} className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Especialistas em meias..." />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Informação 1</label>
-                    <input type="text" value={settingsFormData.footerInfo1 || ''} onChange={e => setSettingsFormData({...settingsFormData, footerInfo1: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Enviamos para todo o Brasil." />
+                    <input type="text" value={settingsFormData.footerInfo1 || ''} onChange={e => setSettingsFormData({...settingsFormData, footerInfo1: e.target.value})} className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Enviamos para todo o Brasil." />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Informação 2</label>
-                    <input type="text" value={settingsFormData.footerInfo2 || ''} onChange={e => setSettingsFormData({...settingsFormData, footerInfo2: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Atendimento de Seg a Sex." />
+                    <input type="text" value={settingsFormData.footerInfo2 || ''} onChange={e => setSettingsFormData({...settingsFormData, footerInfo2: e.target.value})} className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Atendimento de Seg a Sex." />
                   </div>
                 </div>
               </div>
@@ -344,15 +344,15 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Instagram (URL)</label>
-                    <input type="url" value={settingsFormData.instagramUrl || ''} onChange={e => setSettingsFormData({...settingsFormData, instagramUrl: e.target.value})} className="w-full p-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" placeholder="https://instagram.com/..." />
+                    <input type="url" value={settingsFormData.instagramUrl || ''} onChange={e => setSettingsFormData({...settingsFormData, instagramUrl: e.target.value})} className="w-full p-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" placeholder="https://instagram.com/..." />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Facebook (URL)</label>
-                    <input type="url" value={settingsFormData.facebookUrl || ''} onChange={e => setSettingsFormData({...settingsFormData, facebookUrl: e.target.value})} className="w-full p-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" placeholder="https://facebook.com/..." />
+                    <input type="url" value={settingsFormData.facebookUrl || ''} onChange={e => setSettingsFormData({...settingsFormData, facebookUrl: e.target.value})} className="w-full p-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" placeholder="https://facebook.com/..." />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">TikTok (URL)</label>
-                    <input type="url" value={settingsFormData.tiktokUrl || ''} onChange={e => setSettingsFormData({...settingsFormData, tiktokUrl: e.target.value})} className="w-full p-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" placeholder="https://tiktok.com/..." />
+                    <input type="url" value={settingsFormData.tiktokUrl || ''} onChange={e => setSettingsFormData({...settingsFormData, tiktokUrl: e.target.value})} className="w-full p-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" placeholder="https://tiktok.com/..." />
                   </div>
                 </div>
               </div>
@@ -376,7 +376,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-1">Texto do Banner (Opcional se usar imagem)</label>
-                        <input type="text" value={settingsFormData.bannerText || ''} onChange={e => setSettingsFormData({...settingsFormData, bannerText: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Frete Grátis acima de R$100" />
+                        <input type="text" value={settingsFormData.bannerText || ''} onChange={e => setSettingsFormData({...settingsFormData, bannerText: e.target.value})} className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Frete Grátis acima de R$100" />
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-1">Imagem do Banner (Opcional)</label>
@@ -410,7 +410,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                               Fazer Upload da Imagem do Banner
                             </button>
                             <p className="text-xs text-gray-500">Tamanho ideal: 1200x400 pixels para visualização perfeita no catálogo. Ou cole a URL abaixo:</p>
-                            <input type="url" value={settingsFormData.bannerImageUrl || ''} onChange={e => setSettingsFormData({...settingsFormData, bannerImageUrl: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Ex: https://..." />
+                            <input type="url" value={settingsFormData.bannerImageUrl || ''} onChange={e => setSettingsFormData({...settingsFormData, bannerImageUrl: e.target.value})} className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Ex: https://..." />
                           </div>
                         </div>
                       </div>
@@ -433,22 +433,22 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Nome do Produto *</label>
-                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Ex: Kit 10 Pares Meia Esportiva" />
+                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Ex: Kit 10 Pares Meia Esportiva" />
               </div>
               
               <div className="sm:col-span-2">
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Descrição</label>
-                <textarea rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Detalhes do produto..."></textarea>
+                <textarea rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Detalhes do produto..."></textarea>
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Preço (R$) *</label>
-                <input required type="number" step="0.01" min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="99.90" />
+                <input required type="number" step="0.01" min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="99.90" />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Preço Antigo (R$) (De / Por)</label>
-                <input type="number" step="0.01" min="0" value={formData.oldPrice} onChange={e => setFormData({...formData, oldPrice: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="129.90 (Opcional)" />
+                <input type="number" step="0.01" min="0" value={formData.oldPrice} onChange={e => setFormData({...formData, oldPrice: e.target.value})} className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="129.90 (Opcional)" />
               </div>
 
               <div>
@@ -456,7 +456,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                 <select 
                   value={formData.category} 
                   onChange={e => setFormData({...formData, category: e.target.value})} 
-                  className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                  className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                 >
                   <option value="">Selecione uma categoria...</option>
                   <option value="Cano Alto">Cano Alto</option>
@@ -506,19 +506,19 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                       Fazer Upload de Foto
                     </button>
                     <p className="text-xs text-gray-500">Ou cole a URL da imagem abaixo:</p>
-                    <input type="url" value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} className="w-full mt-1 p-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" placeholder="https://..." />
+                    <input type="url" value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} className="w-full mt-1 p-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" placeholder="https://..." />
                   </div>
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Tamanhos (Separados por vírgula) *</label>
-                <input required type="text" value={formData.sizes} onChange={e => setFormData({...formData, sizes: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="34-38, 39-43" />
+                <input required type="text" value={formData.sizes} onChange={e => setFormData({...formData, sizes: e.target.value})} className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="34-38, 39-43" />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Cores (Separadas por vírgula) *</label>
-                <input required type="text" value={formData.colors} onChange={e => setFormData({...formData, colors: e.target.value})} className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Branco, Preto, Cinza" />
+                <input required type="text" value={formData.colors} onChange={e => setFormData({...formData, colors: e.target.value})} className="w-full p-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Branco, Preto, Cinza" />
               </div>
             </div>
 
