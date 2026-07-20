@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, type ChangeEvent, type FormEvent } from 'react';
-import { X, Plus, Edit2, Trash2, Image as ImageIcon, Upload } from 'lucide-react';
+import { X, Plus, Edit2, Trash2, Image as ImageIcon, Upload, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { Product } from '../types';
-
+import { uploadImage } from '../lib/storage';
 import { StoreSettings } from '../hooks/useSettings';
 
 interface AdminPanelProps {
@@ -39,6 +39,15 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
   const [settingsError, setSettingsError] = useState<string | null>(null);
   const [isSavingSettings, setIsSavingSettings] = useState(false);
   const [newCategory, setNewCategory] = useState('');
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [isSubmittingProduct, setIsSubmittingProduct] = useState(false);
+
+  useEffect(() => {
+    if (toast) {
+      const t = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [toast]);
 
   // Sincroniza alterações das props de configurações para o state settingsFormData
   useEffect(() => {
@@ -71,82 +80,74 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
     }));
   };
 
-  const handleBannerUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const processImage = (file: File, maxWidth: number, maxHeight: number, format: string, quality: number): Promise<HTMLCanvasElement> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 1600; // Maior largura para banners
-        const MAX_HEIGHT = 800;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
           }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
-        }
 
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx?.drawImage(img, 0, 0, width, height);
-        
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-        setSettingsFormData(prev => ({ ...prev, bannerImageUrl: dataUrl }));
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          resolve(canvas);
+        };
+        img.onerror = reject;
+        img.src = event.target?.result as string;
       };
-      img.src = event.target?.result as string;
-    };
-    reader.readAsDataURL(file);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   };
 
-  const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleBannerUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    try {
+      const canvas = await processImage(file, 1600, 800, 'jpeg', 0.8);
+      const url = await uploadImage(canvas, 'banners', 0.8);
+      if (url) {
+        setSettingsFormData(prev => ({ ...prev, bannerImageUrl: url }));
+      } else {
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        setSettingsFormData(prev => ({ ...prev, bannerImageUrl: dataUrl }));
+      }
+    } catch (err) {
+      console.error('Erro ao processar banner:', err);
+    }
+  };
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 400; // Tamanho menor para o logo
-        const MAX_HEIGHT = 400;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx?.drawImage(img, 0, 0, width, height);
-        
-        const dataUrl = canvas.toDataURL('image/png'); // Usando PNG para logos com transparência
+  const handleLogoUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const canvas = await processImage(file, 400, 400, 'png', 0.9);
+      const url = await uploadImage(canvas, 'logos', 0.9);
+      if (url) {
+        setSettingsFormData(prev => ({ ...prev, logo: url }));
+      } else {
+        const dataUrl = canvas.toDataURL('image/png');
         setSettingsFormData(prev => ({ ...prev, logo: dataUrl }));
-      };
-      img.src = event.target?.result as string;
-    };
-    reader.readAsDataURL(file);
+      }
+    } catch (err) {
+      console.error('Erro ao processar logo:', err);
+    }
   };
 
   const handleSaveSettings = async (e: FormEvent) => {
@@ -156,9 +157,11 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
     try {
       await onUpdateSettings(settingsFormData);
       setSettingsError(null);
+      setToast({ message: 'Configurações salvas com sucesso!', type: 'success' });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Erro desconhecido';
       setSettingsError(msg);
+      setToast({ message: 'Erro ao salvar configurações', type: 'error' });
     } finally {
       setIsSavingSettings(false);
     }
@@ -188,71 +191,58 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
     setIsFormOpen(true);
   };
 
-  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 800;
-        const MAX_HEIGHT = 800;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx?.drawImage(img, 0, 0, width, height);
-        
+    try {
+      const canvas = await processImage(file, 800, 800, 'jpeg', 0.7);
+      const url = await uploadImage(canvas, 'products', 0.7);
+      if (url) {
+        setFormData(prev => ({ ...prev, image: url }));
+      } else {
         const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
         setFormData(prev => ({ ...prev, image: dataUrl }));
-      };
-      img.src = event.target?.result as string;
-    };
-    reader.readAsDataURL(file);
+      }
+    } catch (err) {
+      console.error('Erro ao processar imagem:', err);
+    }
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
+    setIsSubmittingProduct(true);
+
     const parsedOldPrice = parseFloat(formData.oldPrice.replace(',', '.'));
-    
+    const imageUrl = formData.image || 'https://images.unsplash.com/photo-1582966772680-860e372bb558?w=800&q=80';
+
     const newProduct: Product = {
       id: editingId || Date.now().toString(),
       name: formData.name,
       description: formData.description,
       price: parseFloat(formData.price.replace(',', '.')) || 0,
       oldPrice: isNaN(parsedOldPrice) || parsedOldPrice <= 0 ? undefined : parsedOldPrice,
-      image: formData.image || 'https://images.unsplash.com/photo-1582966772680-860e372bb558?w=800&q=80', // Padrão
+      image: imageUrl,
       sizes: formData.sizes.split(',').map(s => s.trim()).filter(Boolean),
       colors: formData.colors.split(',').map(c => c.trim()).filter(Boolean),
-      category: formData.category
+      category: formData.category,
     };
 
     if (newProduct.sizes.length === 0) newProduct.sizes = ['Único'];
     if (newProduct.colors.length === 0) newProduct.colors = ['Padrão'];
 
-    if (editingId) {
-      onUpdate(newProduct);
-    } else {
-      onAdd(newProduct);
+    try {
+      if (editingId) {
+        await onUpdate(newProduct);
+      } else {
+        await onAdd(newProduct);
+      }
+      setToast({ message: editingId ? 'Produto atualizado com sucesso!' : 'Produto adicionado com sucesso!', type: 'success' });
+      setIsFormOpen(false);
+    } catch {
+      setToast({ message: 'Erro ao salvar produto', type: 'error' });
+    } finally {
+      setIsSubmittingProduct(false);
     }
-    setIsFormOpen(false);
   };
 
   return (
@@ -615,8 +605,9 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
               <button type="button" onClick={() => setIsFormOpen(false)} className="px-6 py-2.5 text-gray-700 font-medium hover:bg-gray-200 rounded-lg transition-colors">
                 Cancelar
               </button>
-              <button type="submit" className="px-6 py-2.5 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 transition-colors shadow-sm">
-                Salvar Produto
+              <button type="submit" disabled={isSubmittingProduct} className="px-6 py-2.5 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 disabled:bg-orange-400 disabled:cursor-not-allowed transition-colors shadow-sm flex items-center gap-2">
+                {isSubmittingProduct ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                {isSubmittingProduct ? 'Salvando...' : 'Salvar Produto'}
               </button>
             </div>
           </form>
@@ -660,6 +651,17 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
           </>
         )}
       </div>
+
+      {toast && (
+        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-2 px-5 py-3 rounded-xl shadow-2xl border text-sm font-medium transition-all ${
+          toast.type === 'success'
+            ? 'bg-green-900 text-green-100 border-green-700'
+            : 'bg-red-900 text-red-100 border-red-700'
+        }`}>
+          {toast.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+          {toast.message}
+        </div>
+      )}
     </div>
   );
 }
