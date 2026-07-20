@@ -11,17 +11,39 @@ interface CartDrawerProps {
   cart: CartItem[];
   updateQuantity: (id: string, delta: number) => void;
   removeItem: (id: string) => void;
+  clearCart: () => void;
   settings: StoreSettings;
 }
 
-export function CartDrawer({ isOpen, onClose, cart, updateQuantity, removeItem, settings }: CartDrawerProps) {
+export function CartDrawer({ isOpen, onClose, cart, updateQuantity, removeItem, clearCart, settings }: CartDrawerProps) {
   const [customerName, setCustomerName] = useState('');
-  
+  const [customerCPF, setCustomerCPF] = useState('');
+  const [customerCEP, setCustomerCEP] = useState('');
+
   const total = cart.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
+
+  const formatCPF = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 11);
+    return digits
+      .replace(/^(\d{3})(\d)/, '$1.$2')
+      .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+      .replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
+  };
+
+  const formatCEP = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 8);
+    return digits.replace(/^(\d{5})(\d)/, '$1-$2');
+  };
+
+  const isFormValid = customerName.trim().length > 0
+    && customerCPF.replace(/\D/g, '').length >= 11
+    && customerCEP.replace(/\D/g, '').length >= 8;
 
   const getWhatsAppLink = () => {
     let text = `🛍️ *NOVO PEDIDO - ${settings.name}* 🛍️\n\n`;
-    if (customerName.trim()) text += `👤 *Cliente:* ${customerName.trim()}\n\n`;
+    text += `👤 *Cliente:* ${customerName.trim()}\n`;
+    text += `📄 *CPF:* ${customerCPF}\n`;
+    text += `📮 *CEP:* ${customerCEP}\n\n`;
 
     text += `📋 *RESUMO DO PEDIDO:*\n`;
     cart.forEach((item, index) => {
@@ -122,29 +144,57 @@ export function CartDrawer({ isOpen, onClose, cart, updateQuantity, removeItem, 
 
             {cart.length > 0 && (
               <div className="border-t p-6 bg-gray-50 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Seu Nome (Opcional)</label>
-                  <input
-                    type="text"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    placeholder="Como gostaria de ser chamado?"
-                    className="w-full px-4 min-h-[44px] rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-sm"
-                  />
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Nome Completo <span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder="Seu nome completo"
+                      className="w-full px-4 min-h-[44px] rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">CPF <span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={customerCPF}
+                      onChange={(e) => setCustomerCPF(formatCPF(e.target.value))}
+                      placeholder="000.000.000-00"
+                      className="w-full px-4 min-h-[44px] rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">CEP de Entrega <span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={customerCEP}
+                      onChange={(e) => setCustomerCEP(formatCEP(e.target.value))}
+                      placeholder="00000-000"
+                      className="w-full px-4 min-h-[44px] rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all text-sm"
+                    />
+                  </div>
                 </div>
                 <div className="flex items-center justify-between text-lg font-bold text-gray-900 pt-2 border-t border-gray-200">
                   <span>Total</span>
                   <span>R$ {total.toFixed(2).replace('.', ',')}</span>
                 </div>
-                <a
-                  href={getWhatsAppLink()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-4 px-4 rounded-xl font-medium transition-colors shadow-sm"
+                <button
+                  onClick={() => {
+                    if (isFormValid) {
+                      window.open(getWhatsAppLink(), '_blank');
+                      clearCart();
+                    }
+                  }}
+                  disabled={!isFormValid}
+                  className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed text-white py-4 px-4 rounded-xl font-medium transition-colors shadow-sm"
                 >
                   <MessageCircle className="w-5 h-5" />
                   Enviar Pedido via WhatsApp
-                </a>
+                </button>
                 <button
                   onClick={onClose}
                   className="w-full py-3.5 px-4 rounded-xl font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"

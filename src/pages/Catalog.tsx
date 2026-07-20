@@ -76,6 +76,10 @@ export default function App() {
     setCart(prev => prev.filter(item => item.id !== id));
   };
 
+  const clearCart = () => {
+    setCart([]);
+  };
+
   const cartItemsCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   const categories = Array.isArray(settings.categories) ? settings.categories : [];
@@ -411,6 +415,7 @@ export default function App() {
         cart={cart}
         updateQuantity={updateQuantity}
         removeItem={removeItem}
+        clearCart={clearCart}
         settings={settings}
       />
     </div>
