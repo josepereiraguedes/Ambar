@@ -78,7 +78,6 @@ export default function App() {
     });
     setToastMessage(`Adicionado: ${newItem.product.name}`);
     setTimeout(() => setToastMessage(null), 3000);
-    setSelectedProduct(null);
   };
 
   const updateQuantity = (id: string, delta: number) => {
