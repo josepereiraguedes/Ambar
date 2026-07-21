@@ -35,46 +35,46 @@ export function Admin() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-dark p-4 font-sans">
-        <div className="bg-dark-light border border-dark-lighter p-8 sm:p-10 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
+        <div className="bg-dark-light border border-dark-lighter p-6 sm:p-10 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-1 bg-gradient-to-r from-transparent via-primary to-transparent blur-md"></div>
           
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-extrabold text-white tracking-tight mb-2">Acesso Restrito</h2>
-            <p className="text-gray-400 text-sm">Insira suas credenciais para gerenciar o catálogo</p>
+          <div className="text-center mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-2">Acesso Restrito</h2>
+            <p className="text-gray-400 text-xs sm:text-sm">Insira suas credenciais para gerenciar o catálogo</p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
             {error && (
-              <div className="p-3.5 bg-red-950/50 border border-red-800/80 rounded-xl text-red-200 text-xs font-semibold text-center">
+              <div className="p-3 sm:p-3.5 bg-red-950/50 border border-red-800/80 rounded-xl text-red-200 text-xs font-semibold text-center">
                 {error}
               </div>
             )}
             
             <div>
-              <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">E-mail / Usuário</label>
+              <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1.5 sm:mb-2">E-mail / Usuário</label>
               <input
                 required
                 type="text"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="Ex: ambaradmin.com"
-                className="w-full px-4 py-3 bg-dark-lighter/50 border border-dark-lighter/80 text-white rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all duration-300 text-sm"
+                className="w-full px-4 py-3 sm:py-3 bg-black/30 border border-dark-light text-white rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all duration-300 text-sm placeholder-gray-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Senha</label>
+              <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1.5 sm:mb-2">Senha</label>
               <input
                 required
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Digite sua senha"
-                className="w-full px-4 py-3 bg-dark-lighter/50 border border-dark-lighter/80 text-white rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all duration-300 text-sm"
+                className="w-full px-4 py-3 sm:py-3 bg-black/30 border border-dark-light text-white rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all duration-300 text-sm placeholder-gray-500"
               />
             </div>
 
-            <div className="pt-2">
+            <div className="pt-1 sm:pt-2">
               <button 
                 type="submit"
                 disabled={isSigningIn}
@@ -85,7 +85,7 @@ export function Admin() {
             </div>
           </form>
           
-          <div className="mt-6 text-center">
+          <div className="mt-5 sm:mt-6 text-center">
             <button 
               onClick={() => navigate('/')} 
               className="text-gray-500 hover:text-gray-300 text-xs font-semibold transition-colors"

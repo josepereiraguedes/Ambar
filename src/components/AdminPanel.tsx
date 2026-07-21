@@ -274,33 +274,33 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
   };
 
   return (
-    <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
-      <div className="max-w-4xl mx-auto p-4 sm:p-6">
-        <div className="flex items-center justify-between mb-6 sticky top-0 bg-white py-4 border-b border-bg-light z-10">
-          <h2 className="text-2xl font-bold text-text-primary">Gerenciar</h2>
-          <button onClick={onClose} className="p-2.5 bg-bg-light hover:bg-bg-medium rounded-xl transition-all duration-300">
-            <X className="w-6 h-6 text-text-primary" />
+    <div className="fixed inset-0 bg-white z-50 overflow-y-auto safe-top safe-bottom">
+      <div className="max-w-4xl mx-auto p-3 sm:p-6">
+        <div className="flex items-center justify-between mb-4 sm:mb-6 sticky top-0 bg-white py-3 sm:py-4 border-b border-bg-light z-10">
+          <h2 className="text-xl sm:text-2xl font-bold text-text-primary">Gerenciar</h2>
+          <button onClick={onClose} className="p-2 sm:p-2.5 bg-bg-light hover:bg-bg-medium rounded-xl transition-all duration-300">
+            <X className="w-5 h-5 sm:w-6 sm:h-6 text-text-primary" />
           </button>
         </div>
 
-        <div className="flex gap-4 mb-6">
+        <div className="flex gap-2 sm:gap-4 mb-4 sm:mb-6 overflow-x-auto [-webkit-overflow-scrolling:touch]">
           <button 
             onClick={() => { setActiveTab('products'); setIsFormOpen(false); }}
-            className={`px-5 py-2.5 rounded-xl font-medium transition-all duration-300 ${activeTab === 'products' ? 'bg-primary text-white shadow-sm shadow-primary/20' : 'bg-bg-light text-text-secondary hover:bg-bg-medium'}`}
+            className={`whitespace-nowrap px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all duration-300 ${activeTab === 'products' ? 'bg-primary text-white shadow-sm shadow-primary/20' : 'bg-bg-light text-text-secondary hover:bg-bg-medium'}`}
           >
             Catálogo de Produtos
           </button>
           <button 
             onClick={() => { setActiveTab('settings'); setSettingsFormData({ ...settings, categories: Array.isArray(settings.categories) ? settings.categories : [] }); }}
-            className={`px-5 py-2.5 rounded-xl font-medium transition-all duration-300 ${activeTab === 'settings' ? 'bg-primary text-white shadow-sm shadow-primary/20' : 'bg-bg-light text-text-secondary hover:bg-bg-medium'}`}
+            className={`whitespace-nowrap px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all duration-300 ${activeTab === 'settings' ? 'bg-primary text-white shadow-sm shadow-primary/20' : 'bg-bg-light text-text-secondary hover:bg-bg-medium'}`}
           >
             Configurações da Loja
           </button>
         </div>
 
         {activeTab === 'settings' ? (
-          <form onSubmit={handleSaveSettings} className="bg-bg-light p-6 sm:p-8 rounded-2xl border border-bg-medium shadow-sm">
-            <h3 className="text-xl font-bold text-text-primary mb-6">Configurações da Loja</h3>
+          <form onSubmit={handleSaveSettings} className="bg-bg-light p-4 sm:p-8 rounded-2xl border border-bg-medium shadow-sm">
+            <h3 className="text-lg sm:text-xl font-bold text-text-primary mb-4 sm:mb-6">Configurações da Loja</h3>
             
             {settingsError && (
               <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
@@ -313,7 +313,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
               </div>
             )}
             
-            <div className="grid grid-cols-1 gap-5">
+            <div className="grid grid-cols-1 gap-4 sm:gap-5">
               <div>
                 <label className="block text-sm font-semibold text-text-primary mb-1">Nome da Loja/Fábrica</label>
                 <input required type="text" value={settingsFormData.name} onChange={e => setSettingsFormData({...settingsFormData, name: e.target.value})} className="w-full p-2.5 bg-white text-text-primary border border-bg-medium rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all duration-300" placeholder="Ex: Ambar" />
@@ -457,12 +457,12 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                     onChange={e => setNewCategory(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addCategory(); } }}
                     placeholder="Nova categoria..."
-                    className="flex-1 p-2 bg-white text-text-primary border border-bg-medium rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all duration-300 text-sm"
+                    className="flex-1 p-2.5 sm:p-2 bg-white text-text-primary border border-bg-medium rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all duration-300 text-sm"
                   />
                   <button
                     type="button"
                     onClick={addCategory}
-                    className="flex items-center gap-1 px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium hover:bg-primary-hover transition-all duration-300"
+                    className="flex items-center gap-1 px-4 py-2.5 sm:py-2 bg-primary text-white rounded-xl text-sm font-medium hover:bg-primary-hover transition-all duration-300 active:scale-95"
                   >
                     <Plus className="w-4 h-4" />
                     Adicionar
@@ -501,7 +501,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                                     ...prev,
                                     banners: (prev.banners || []).filter((_, j) => j !== i),
                                   }))}
-                                  className="p-1.5 text-text-secondary hover:text-red-500 hover:bg-red-50 rounded-lg transition-all shrink-0"
+                  className="p-2 sm:p-1.5 text-text-secondary hover:text-red-500 hover:bg-red-50 rounded-lg transition-all shrink-0"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </button>
@@ -727,7 +727,7 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
                                 key={icon}
                                 type="button"
                                 onClick={() => setNewBannerInfoIcon(icon)}
-                                className={`w-9 h-9 rounded-lg flex items-center justify-center border transition-all duration-200 ${
+                                className={`w-11 h-11 sm:w-10 sm:h-10 rounded-xl sm:rounded-lg flex items-center justify-center border transition-all duration-200 active:scale-90 ${
                                   newBannerInfoIcon === icon
                                     ? 'bg-primary text-white border-primary shadow-sm shadow-primary/20'
                                     : 'bg-white text-text-secondary border-bg-medium hover:border-primary hover:text-primary'
@@ -785,8 +785,8 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
               </div>
             </div>
 
-            <div className="mt-8 flex flex-col-reverse sm:flex-row justify-end gap-3 pt-6 border-t border-bg-medium">
-              <button type="submit" disabled={isSavingSettings} className="px-6 py-2.5 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover disabled:bg-primary/50 disabled:cursor-not-allowed transition-all duration-300 shadow-sm shadow-primary/20">
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-end gap-3 pt-4 sm:pt-6 border-t border-bg-medium">
+              <button type="submit" disabled={isSavingSettings} className="w-full sm:w-auto px-6 py-3 sm:py-2.5 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover disabled:bg-primary/50 disabled:cursor-not-allowed transition-all duration-300 shadow-sm shadow-primary/20 active:scale-[0.98]">
                 {isSavingSettings ? 'Salvando...' : 'Salvar Configurações'}
               </button>
             </div>
@@ -795,8 +795,8 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
             )}
           </form>
         ) : isFormOpen ? (
-          <form onSubmit={handleSubmit} className="bg-bg-light p-6 sm:p-8 rounded-2xl border border-bg-medium shadow-sm">
-            <h3 className="text-xl font-bold text-text-primary mb-6">{editingId ? 'Editar Produto' : 'Novo Produto'}</h3>
+          <form onSubmit={handleSubmit} className="bg-bg-light p-4 sm:p-8 rounded-2xl border border-bg-medium shadow-sm">
+            <h3 className="text-lg sm:text-xl font-bold text-text-primary mb-4 sm:mb-6">{editingId ? 'Editar Produto' : 'Novo Produto'}</h3>
             
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div className="sm:col-span-2">
@@ -885,11 +885,11 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
               </div>
             </div>
 
-            <div className="mt-8 flex flex-col-reverse sm:flex-row justify-end gap-3 pt-6 border-t border-bg-medium">
-              <button type="button" onClick={() => setIsFormOpen(false)} className="px-6 py-2.5 text-text-primary font-medium hover:bg-bg-medium rounded-xl transition-all duration-300">
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-end gap-3 pt-4 sm:pt-6 border-t border-bg-medium">
+              <button type="button" onClick={() => setIsFormOpen(false)} className="w-full sm:w-auto px-6 py-3 sm:py-2.5 text-text-primary font-medium hover:bg-bg-medium rounded-xl transition-all duration-300 active:scale-[0.98]">
                 Cancelar
               </button>
-              <button type="submit" disabled={isSubmittingProduct} className="px-6 py-2.5 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover disabled:bg-primary/50 disabled:cursor-not-allowed transition-all duration-300 shadow-sm shadow-primary/20 flex items-center gap-2">
+              <button type="submit" disabled={isSubmittingProduct} className="w-full sm:w-auto px-6 py-3 sm:py-2.5 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover disabled:bg-primary/50 disabled:cursor-not-allowed transition-all duration-300 shadow-sm shadow-primary/20 flex items-center justify-center gap-2 active:scale-[0.98]">
                 {isSubmittingProduct ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                 {isSubmittingProduct ? 'Salvando...' : 'Salvar Produto'}
               </button>
@@ -897,13 +897,13 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
           </form>
         ) : (
           <>
-            <button onClick={() => handleOpenForm()} className="mb-8 w-full sm:w-auto flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-medium hover:bg-primary-hover transition-all duration-300 shadow-sm shadow-primary/20">
+            <button onClick={() => handleOpenForm()} className="mb-6 sm:mb-8 w-full sm:w-auto flex items-center justify-center gap-2 bg-primary text-white px-5 sm:px-6 py-3 sm:py-3 rounded-xl font-medium hover:bg-primary-hover transition-all duration-300 shadow-sm shadow-primary/20 active:scale-[0.98]">
               <Plus className="w-5 h-5" /> Adicionar Novo Produto
             </button>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {products.map(p => (
-                <div key={p.id} className="flex gap-4 p-4 border border-bg-medium rounded-xl bg-white shadow-sm items-center hover:border-primary/30 transition-all duration-300">
+                <div key={p.id} className="flex gap-3 sm:gap-4 p-3 sm:p-4 border border-bg-medium rounded-xl bg-white shadow-sm items-center hover:border-primary/30 transition-all duration-300">
                    <div className="w-20 h-20 shrink-0 bg-bg-light rounded-xl overflow-hidden border border-bg-medium">
                      {p.image ? (
                        <img src={p.image} className="w-full h-full object-cover mix-blend-multiply" />
@@ -937,12 +937,12 @@ export function AdminPanel({ isOpen, onClose, products, onAdd, onUpdate, onRemov
       </div>
 
       {toast && (
-        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-2 px-5 py-3 rounded-xl shadow-2xl border text-sm font-medium transition-all duration-300 ${
+        <div className={`fixed bottom-[calc(1rem+env(safe-area-inset-bottom,0px))] sm:bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl shadow-2xl border text-xs sm:text-sm font-medium transition-all duration-300 ${
           toast.type === 'success'
             ? 'bg-primary text-white border-primary/20'
             : 'bg-red-900 text-red-100 border-red-700'
         }`}>
-          {toast.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+          {toast.type === 'success' ? <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5" />}
           {toast.message}
         </div>
       )}
