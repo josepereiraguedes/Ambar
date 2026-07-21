@@ -271,8 +271,8 @@ export default function App() {
       {/* Info Cards */}
       {allLoaded && settings.bannerInfoItems && settings.bannerInfoItems.length > 0 && (
         <section className="relative z-30 -mt-[24px] sm:-mt-[100px] lg:-mt-[120px] pb-5 sm:pb-10 pointer-events-none">
-          <div className="max-w-[1400px] mx-auto px-3 sm:px-8 lg:px-12 pointer-events-auto">
-            <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 sm:pb-0 snap-x snap-mandatory scrollbar-none [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden justify-start lg:justify-center">
+          <div className="max-w-[1400px] mx-auto sm:px-8 lg:px-12 pointer-events-auto">
+            <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 sm:pb-0 snap-x snap-mandatory scrollbar-none [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden justify-start pl-3 sm:pl-0 pr-[18vw] sm:pr-0">
               {settings.bannerInfoItems.slice(0, 6).concat(
                 settings.bannerInfoItems.length > 6
                   ? [{ text: `+${settings.bannerInfoItems.length - 6} mais`, icon: 'Sparkles' }]
@@ -306,7 +306,7 @@ export default function App() {
                 return (
                   <div
                     key={i}
-                    className={`snap-start shrink-0 bg-white rounded-xl sm:rounded-2xl border border-[rgba(0,0,0,0.05)] flex flex-col shadow-[0_10px_25px_rgba(0,0,0,0.08)] sm:hover:-translate-y-2 sm:hover:shadow-[0_20px_40px_rgba(0,0,0,0.12)] transition-all duration-300 pointer-events-auto active:scale-[0.98] ${hasImage ? 'w-[85vw] sm:w-[260px] h-auto' : 'w-[42vw] sm:w-[200px] min-h-[200px] sm:min-h-[260px]'}`}
+                    className={`snap-start shrink-0 bg-white rounded-xl sm:rounded-2xl border border-[rgba(0,0,0,0.05)] flex flex-col shadow-[0_10px_25px_rgba(0,0,0,0.08)] sm:hover:-translate-y-2 sm:hover:shadow-[0_20px_40px_rgba(0,0,0,0.12)] transition-all duration-300 pointer-events-auto active:scale-[0.98] ${hasImage ? 'w-[72vw] sm:w-[260px] h-auto' : 'w-[38vw] sm:w-[200px] min-h-[200px] sm:min-h-[260px]'}`}
                   >
                     {hasImage ? (
                       <>
