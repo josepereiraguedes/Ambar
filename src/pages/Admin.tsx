@@ -29,15 +29,14 @@ export function Admin() {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white font-sans">Carregando...</div>;
+    return <div className="min-h-screen flex items-center justify-center bg-dark text-white font-sans">Carregando...</div>;
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-950 p-4 font-sans">
-        <div className="bg-gray-900 border border-gray-800 p-6 sm:p-8 rounded-3xl shadow-2xl max-w-md w-full relative overflow-hidden">
-          {/* Brilho Ambiente no Topo */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent blur-md"></div>
+      <div className="min-h-screen flex items-center justify-center bg-dark p-4 font-sans">
+        <div className="bg-dark-light border border-dark-lighter p-8 sm:p-10 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-1 bg-gradient-to-r from-transparent via-primary to-transparent blur-md"></div>
           
           <div className="text-center mb-8">
             <h2 className="text-3xl font-extrabold text-white tracking-tight mb-2">Acesso Restrito</h2>
@@ -59,7 +58,7 @@ export function Admin() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="Ex: ambaradmin.com"
-                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700/80 text-white rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all text-sm"
+                className="w-full px-4 py-3 bg-dark-lighter/50 border border-dark-lighter/80 text-white rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all duration-300 text-sm"
               />
             </div>
 
@@ -71,7 +70,7 @@ export function Admin() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Digite sua senha"
-                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700/80 text-white rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all text-sm"
+                className="w-full px-4 py-3 bg-dark-lighter/50 border border-dark-lighter/80 text-white rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all duration-300 text-sm"
               />
             </div>
 
@@ -79,7 +78,7 @@ export function Admin() {
               <button 
                 type="submit"
                 disabled={isSigningIn}
-                className="w-full bg-orange-600 hover:bg-orange-500 disabled:bg-orange-600/50 text-white font-bold py-3.5 px-6 rounded-xl transition-all duration-200 shadow-lg shadow-orange-600/20 active:scale-[0.98]"
+                className="w-full bg-primary hover:bg-primary-hover disabled:bg-primary/50 text-white font-bold py-3.5 px-6 rounded-xl transition-all duration-200 shadow-lg shadow-primary/20 active:scale-[0.98]"
               >
                 {isSigningIn ? 'Entrando...' : 'Entrar no Painel'}
               </button>
@@ -100,7 +99,7 @@ export function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-dark text-white">
       <AdminPanel 
         isOpen={true} 
         onClose={() => navigate('/')} 
